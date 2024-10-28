@@ -25,7 +25,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient import discovery
 import gspread
-from frappe.utils import get_site_name
+from frappe.utils import get_site_name, nowdate, add_days
 
 from google.oauth2 import service_account
 import os
@@ -108,7 +108,6 @@ class DataExporter:
 	
 	def initialize_service(self):
 		#initialize Google Sheet Service
-
 		SERVICE_ACCOUNT_FILE = os.getcwd()+"/"+cstr(frappe.local.site) + frappe.local.conf.google_sheet
 
 		SCOPES = ["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
@@ -187,12 +186,13 @@ class DataExporter:
 
 			self.update_sheet(values)
 			self.batch_update(sheet)
-
 		if self.with_data and not values:
 			frappe.respond_as_web_page(
 				_("No Data"), _("There is no data to be exported"), indicator_color="orange"
 			)
 		result = {"google_sheet_id":self.google_sheet_id, "link":self.link,"sheet_name":self.sheet_name}
+		frappe.db.set_value("Google Sheet Data Export", {"reference_doctype": self.doctype}, "last_execution_date", nowdate())
+
 		return result
 
 
@@ -562,10 +562,9 @@ class DataExporter:
 
 @frappe.whitelist()
 def update_google_sheet_daily():
-	list_of_export = frappe.get_list("Google Sheet Data Export",{"enable_auto_update":1}, ['name'])
-
+	yesterday = add_days(nowdate(), -1)
+	list_of_export = frappe.get_list("Google Sheet Data Export", {"enable_auto_update": 1, "last_execution_date": yesterday}, ['name'], limit=1)
 	for e in list_of_export:
-		time.sleep(20)
 		doc = frappe.get_doc("Google Sheet Data Export",e.name)
 
 		frappe.enqueue(export_data, 
@@ -633,12 +632,12 @@ def export_from_excel():
 
 
 def get_column_identifier(num_columns):
-    # Function to convert column number to Excel-style letters
-    def number_to_column_letter(n):
-        result = ''
-        while n > 0:
-            n, remainder = divmod(n - 1, 26)
-            result = chr(65 + remainder) + result
-        return result
+	# Function to convert column number to Excel-style letters
+	def number_to_column_letter(n):
+		result = ''
+		while n > 0:
+			n, remainder = divmod(n - 1, 26)
+			result = chr(65 + remainder) + result
+		return result
 
-    return number_to_column_letter(num_columns)
+	return number_to_column_letter(num_columns)
