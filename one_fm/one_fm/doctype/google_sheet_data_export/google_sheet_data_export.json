@@ -9,6 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "enable_auto_update",
+  "column_break_mqrt",
+  "last_execution_date",
   "google_sheet_reference_section",
   "have_existing_sheet",
   "link",
@@ -127,11 +129,20 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "client_id"
+  },
+  {
+   "fieldname": "column_break_mqrt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_execution_date",
+   "fieldtype": "Date",
+   "label": "Last execution date"
   }
  ],
  "hide_toolbar": 1,
  "links": [],
- "modified": "2023-06-14 09:19:38.404953",
+ "modified": "2024-10-25 13:59:39.287594",
  "modified_by": "Administrator",
  "module": "One Fm",
  "name": "Google Sheet Data Export",
