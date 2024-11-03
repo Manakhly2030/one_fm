@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_rename": 1,
  "autoname": "field:item_type",
  "creation": "2021-02-06 10:10:04.995726",
  "doctype": "DocType",
