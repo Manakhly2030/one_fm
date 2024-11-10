@@ -15,6 +15,8 @@
   "date",
   "section_break_3",
   "attendees",
+  "general_attendance_section",
+  "general_attendance",
   "section_break_5",
   "discussion_topic",
   "meeting_duration",
@@ -54,13 +56,15 @@
   },
   {
    "fieldname": "section_break_3",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "POC Attendance"
   },
   {
    "fieldname": "attendees",
    "fieldtype": "Table",
    "label": "Attendees",
-   "options": "MOM POC"
+   "options": "MOM POC",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_5",
@@ -214,6 +218,17 @@
    "fieldname": "discussion_brief",
    "fieldtype": "Long Text",
    "label": "Discussion Brief"
+  },
+  {
+   "fieldname": "general_attendance_section",
+   "fieldtype": "Section Break",
+   "label": "General Attendance"
+  },
+  {
+   "fieldname": "general_attendance",
+   "fieldtype": "Table",
+   "label": "General Attendance",
+   "options": "General Attendance"
   }
  ],
  "is_submittable": 1,
