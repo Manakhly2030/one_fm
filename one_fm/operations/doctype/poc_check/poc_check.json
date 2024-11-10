@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:POC-CHK-{####}",
+ "creation": "2024-11-07 13:55:11.792442",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_x1e2",
+  "project",
+  "supervisor",
+  "supervisor_name",
+  "column_break_ghof",
+  "site",
+  "amended_from",
+  "mom",
+  "section_break_mmpv",
+  "mom_poc_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_x1e2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supervisor",
+   "fieldtype": "Link",
+   "label": "Supervisor",
+   "options": "Employee",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supervisor_name",
+   "fieldtype": "Data",
+   "label": "Supervisor Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ghof",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "label": "Site",
+   "options": "Operations Site",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "POC Check",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "mom",
+   "fieldtype": "Link",
+   "label": "MOM",
+   "options": "MOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_mmpv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "mom_poc_table",
+   "fieldtype": "Table",
+   "label": "MOM POC Table",
+   "options": "Missing POC Attendance"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-11-09 13:13:43.779687",
+ "modified_by": "Administrator",
+ "module": "Operations",
+ "name": "POC Check",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
