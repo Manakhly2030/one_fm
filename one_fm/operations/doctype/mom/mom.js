@@ -14,6 +14,7 @@ frappe.ui.form.on('MOM', {
 			frm.clear_table("attendees");
 		}
 		if(frm.doc.project){
+			set_site_filter(frm)
 			get_project_type(frm, "Project", frm.doc.project);
 			get_poc_list(frm, "Project", frm.doc.project);
 		}
@@ -127,12 +128,27 @@ function get_project_type(frm, doctype, name){
 	});
 }
 
+function set_site_filter(frm){
+	frm.set_query('site', function () {
+		return {
+			filters: {
+				'project': frm.doc.project,
+			}
+		};
+	});
+}
+
+function is_attendee_already_added(attendee_list, poc){
+	return Boolean(attendee_list.find(i => i.poc_name === poc))
+}
 
 function set_table(frm, poc_list){
 	poc_list.forEach((poc) => {
-		let child_row = frappe.model.add_child(frm.doc, "attendees");
-		child_row.poc_name = poc.poc;
-		child_row.poc_designation = poc.designation;
+		if(!is_attendee_already_added(frm.doc.attendees, poc.poc)) {
+			let child_row = frappe.model.add_child(frm.doc, "attendees");
+			child_row.poc_name = poc.poc;
+			child_row.poc_designation = poc.designation;
+		}
 	});
 	frm.refresh_fields("attendees");
 }
@@ -149,9 +165,11 @@ var set_table_non_external = (frm, user_list) => {
 			callback: function(r) {
 				if (!r.exc && r.message){
 					r.message.forEach((obj) => {
-						let child_row = frappe.model.add_child(frm.doc, "attendees");
-						child_row.poc_name = obj.employee_name;
-						child_row.poc_designation = obj.designation;
+						if(!is_attendee_already_added(frm.doc.attendees, obj.employee_name)) {
+							let child_row = frappe.model.add_child(frm.doc, "attendees");
+							child_row.poc_name = obj.employee_name;
+							child_row.poc_designation = obj.designation;
+						}
 					});
 					frm.refresh_fields("attendees");
 
@@ -167,10 +185,12 @@ var set_table_non_external = (frm, user_list) => {
 function set_last_attendees_table(frm, poc_list){
 	frm.doc.last_attendees = []
 	poc_list.forEach((mom_poc) => {
-		let child_row = frappe.model.add_child(frm.doc, "last_attendees");
-		child_row.poc_name = mom_poc.poc_name;
-		child_row.poc_designation = mom_poc.poc_designation;
-		child_row.attended_meeting = mom_poc.attended_meeting;
+		if(!is_attendee_already_added(frm.doc.last_attendees, mom_poc.poc_name)) {
+			let child_row = frappe.model.add_child(frm.doc, "last_attendees");
+			child_row.poc_name = mom_poc.poc_name;
+			child_row.poc_designation = mom_poc.poc_designation;
+			child_row.attended_meeting = mom_poc.attended_meeting;
+		}
 	});
 	frm.refresh_fields("last_attendees");
 }
