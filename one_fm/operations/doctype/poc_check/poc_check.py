@@ -8,10 +8,13 @@ from frappe.model.document import Document
 
 
 class POCCheck(Document):
-	def on_submit(self):
+	def validate_rows(self):
 		for each in self.mom_poc_table:
 			if each.action not in ['Do Nothing',"Update POC"]:
 				frappe.throw(f"Please set an action for row {each.idx} in MOM POC Table")
+    
+	def on_submit(self):
+		self.validate_rows()
 		self.remove_assignments()
 		self.update_poc_details()
 	
@@ -33,8 +36,8 @@ class POCCheck(Document):
 								existing_row.poc = each.new_poc_name
 								existing_row.designation = each.new_poc_designation
 								existing_row.save()
-						except frappe.DoesNotExistError:
+						except frappe.exceptions.DoesNotExistError:
 							frappe.throw(f"Please note that <b>{each.poc_name}</b> is not set as a POC in <b>{one}</b> <b>{self.project if one=='Project' else self.site}</b>")
 					
-     
+	 
 

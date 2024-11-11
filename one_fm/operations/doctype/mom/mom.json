@@ -63,8 +63,7 @@
    "fieldname": "attendees",
    "fieldtype": "Table",
    "label": "Attendees",
-   "options": "MOM POC",
-   "read_only": 1
+   "options": "MOM POC"
   },
   {
    "fieldname": "section_break_5",

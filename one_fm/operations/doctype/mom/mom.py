@@ -53,11 +53,13 @@ class MOM(Document):
 						'doctype': "POC Check",
 						'name': poc_check_doc.name,
 						'assign_to': [mom_user],
-						'description':f"Kindly Update this document to update the POC details for {self.project}",
+						'description':f"Kindly fill and submit this document to update the POC details for Site: {self.site} and Project: {self.project}",
 						"date": frappe.utils.getdate(),
 						"priority": "Medium"
 					})
 				frappe.db.commit()
+			frappe.msgprint(_(f"POC Check {poc_check_doc.name} Created!"),
+                alert=True, indicator='green')
 
 
 				
