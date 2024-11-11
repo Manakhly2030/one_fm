@@ -48,31 +48,6 @@ def get_warehouse_contact_details(warehouse):
         contact_details = get_contact_details(contact)
     return contact_details, location
 
-def get_approving_user(doc):
-    """
-        Fetch the line manager of the user that created the request for material
-    """
-    name = ""
-    if doc.get('request_for_material'):
-        name = doc.get('request_for_material')
-
-    elif doc.get("one_fm_request_for_purchase"):
-        name = frappe.db.get_value("Request for Purchase", doc.get("one_fm_request_for_purchase"), "request_for_material")
-
-    return frappe.db.get_value("Request for Material", name, 'request_for_material_approver')
-
-def set_po_approver(doc,ev):
-    """
-    Fetch the line manager of the user that created the request for material
-    if no request for material is found, the Request for Purchase.
-
-
-    Args:
-        doc (doctype): valid doctype
-    """
-    if not doc.custom_purchase_order_approver:
-        doc.custom_purchase_order_approver = get_approving_user(doc)
-
 def get_users_with_role(role):
     """
     Get the users with the role
