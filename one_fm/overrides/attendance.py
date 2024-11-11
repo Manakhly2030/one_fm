@@ -945,7 +945,7 @@ class AttendanceMarking():
                 AND e.shift_working=0""", as_dict=1)
             shifts.extend(non_shifts)
         if shifts:
-            checkins = self.get_checkins(tuple([i.name for i in shifts]) if len(shifts)>1 else (shifts[0].name))
+            checkins = self.get_checkins(tuple([i.name for i in shifts]) if shifts else ())
             if checkins:
                 # employees = [i.employee for i in shifts]
                 checked_in_employees = [i.employee for i in checkins]
@@ -1004,6 +1004,11 @@ class AttendanceMarking():
                                     pass
 
     def get_checkins(self, shift_assignments):
+
+        if not shift_assignments:
+            return []
+
+        placeholders = ', '.join(['%s'] * len(shift_assignments))
         query = f"""
             SELECT 
             ec.name, 
@@ -1041,11 +1046,11 @@ class AttendanceMarking():
         FROM 
             `tabEmployee Checkin` ec
         WHERE 
-            ec.shift_assignment in {shift_assignments}
+            ec.shift_assignment in ({placeholders})
         GROUP BY 
             ec.shift_assignment;
         """
-        return frappe.db.sql(query, as_dict=1)
+        return frappe.db.sql(query, tuple(shift_assignments), as_dict=1)
 
     def mark_day_off(self):
         days_off = frappe.get_list("Employee Schedule", {
