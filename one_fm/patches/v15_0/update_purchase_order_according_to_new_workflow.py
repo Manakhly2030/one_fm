@@ -9,15 +9,17 @@ def execute():
           frappe.db.sql("ALTER TABLE `tabPurchase Order` drop column {0}".format(column))
 
     # Update all PO in 'Pending Approver' to 'Pending Purchase Manager'
-    frappe.db.sql(""" UPDATE `tabPurchase Order`
-                    SET workflow_state = 'Pending Purchase Manager'
-                    WHERE workflow_state = 'Pending Approver'
-                  """)
+    frappe.db.sql("""
+        UPDATE `tabPurchase Order`
+        SET workflow_state = 'Pending Purchase Manager'
+        WHERE workflow_state NOT IN ('Draft', 'Approved', 'Rejected')
+    """)
     
     # Update all PO in 'Rejected' to 'Hold'
-    frappe.db.sql(""" UPDATE `tabPurchase Order`
-                  SET workflow_state = 'Hold', docstatus = 0
-                  WHERE workflow_state = 'Rejected'
-                  """)
+    frappe.db.sql("""
+        UPDATE `tabPurchase Order`
+        SET workflow_state = 'Hold', docstatus = 0
+        WHERE workflow_state = 'Rejected'
+    """)
     
     frappe.db.commit()
