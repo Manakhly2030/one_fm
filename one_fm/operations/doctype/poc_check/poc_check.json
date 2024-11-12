@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:POC-CHK-{####}",
+ "autoname": "naming_series:",
  "creation": "2024-11-07 13:55:11.792442",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -15,7 +15,8 @@
   "amended_from",
   "mom",
   "section_break_mmpv",
-  "mom_poc_table"
+  "mom_poc_table",
+  "naming_series"
  ],
  "fields": [
   {
@@ -79,16 +80,22 @@
    "fieldtype": "Table",
    "label": "MOM POC Table",
    "options": "Missing POC Attendance"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "POC-CHK-.#####"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-09 13:13:43.779687",
+ "modified": "2024-11-12 11:41:40.180994",
  "modified_by": "Administrator",
  "module": "Operations",
  "name": "POC Check",
- "naming_rule": "Expression",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
