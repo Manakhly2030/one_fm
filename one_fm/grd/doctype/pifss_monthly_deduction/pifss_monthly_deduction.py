@@ -9,7 +9,7 @@ import pandas as pd
 import math
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from frappe.utils import today, add_days, get_url
+from frappe.utils import today, add_days, get_url, getdate
 from frappe.utils.user import get_users_with_role
 from frappe.permissions import has_permission
 from one_fm.api.notification import create_notification_log
@@ -160,15 +160,24 @@ class PIFSSMonthlyDeduction(Document):
 				frappe.throw(f"No employee found  for Civil ID {row.civil_id} in deductions row {row.idx}")
 			try:
 				if not frappe.db.exists("Additional Salary", {'pifss_monthly_deduction':row.parent, 'employee':row.employee}):
+					employee_date_of_joining, employee_relieving_date = frappe.db.get_value("Employee", row.employee, ["date_of_joining", "relieving_date"])
+
+					# Payroll date should be after employee joining date and before employee relieving date otherwise it will be deduction date
+					payroll_date = self.deduction_month
+					if employee_date_of_joining and getdate(employee_date_of_joining) > getdate(self.deduction_month):
+						payroll_date = employee_date_of_joining
+					if employee_relieving_date and getdate(employee_relieving_date) < getdate(self.deduction_month):
+						payroll_date = employee_relieving_date
+
 					additional_salary = frappe.new_doc("Additional Salary")
 					additional_salary.employee = row.employee
 					additional_salary.salary_component = "Social Security"
 					additional_salary.amount = row.employee_contribution
-					additional_salary.payroll_date = self.deduction_month
 					additional_salary.company = erpnext.get_default_company()
 					additional_salary.overwrite_salary_structure_amount = 1
 					additional_salary.notes = "Social Security Deduction"
 					additional_salary.pifss_monthly_deduction = row.parent
+					additional_salary.payroll_date = payroll_date
 					additional_salary.insert()
 					additional_salary.submit()
 				else:
@@ -182,7 +191,7 @@ class PIFSSMonthlyDeduction(Document):
 
 	def cancel_additional_salary(self):
 		additional_salaries = frappe.db.get_list("Additional Salary", {'pifss_monthly_deduction':self.name})
-		for row in addtional_salaries:
+		for row in additional_salaries:
 			print('cancelling', row.employee, row.name, row.amount)
 			additional_salary = frappe.get_doc("Additional Salary", row.name)
 			if(additional_salary.docstatus==1):
