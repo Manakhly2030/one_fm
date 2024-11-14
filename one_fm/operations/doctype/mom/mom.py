@@ -23,17 +23,49 @@ class MOM(Document):
 		for attendee in self.attendees[:]:
 			if attendee.attended_meeting:
 				attendees_count = attendees_count + 1
-			else:
-				self.remove(attendee)
-
-		if(attendees_count < 1):
-			frappe.throw(_("Please check the attendees present."))
-
+			
 		if self.issues == "Yes" and len(self.action) < 1:
 			frappe.throw(_("Please add Action taken to the table."))
 
+	def create_poc_check(self):
+		"""
+			Create a POC Check if all the rows in the attendees table in a MOM record are not checked as attended
+		"""	
+		table_checks  = [int(i.attended_meeting) for i in self.attendees]
+		if not any(table_checks):
+		#Create POC Check if no row in the POC table is marked
+			poc_check = frappe._dict()
+			poc_check.doctype = "POC Check"
+			poc_check.project = self.project
+			poc_check.site = self.site
+			poc_check.supervisor = self.supervisor
+			poc_check.supervisor_name = self.supervisor_name
+			poc_check.mom = self.name
+			attendees_list = []
+			for each in self.attendees:
+				attendees_list.append({'poc_name':each.poc_name,'poc_designation':each.poc_designation})
+			poc_check.mom_poc_table = attendees_list
+			poc_check_doc = frappe.get_doc(poc_check)
+			poc_check_doc.save()
+			mom_user  = frappe.get_value("Employee",self.supervisor,'user_id')
+			if mom_user:
+				add_assignment({
+						'doctype': "POC Check",
+						'name': poc_check_doc.name,
+						'assign_to': [mom_user],
+						'description':f"Kindly fill and submit this document to update the POC details for Site: {self.site} and Project: {self.project}",
+						"date": frappe.utils.getdate(),
+						"priority": "Medium"
+					})
+				frappe.db.commit()
+			frappe.msgprint(_(f"POC Check {poc_check_doc.name} Created!"),
+                alert=True, indicator='green')
 
+
+				
+			
 	def on_submit(self):
+		self.create_poc_check()
 		project_type = frappe.db.get_value("Project", self.project, "project_type")
 		if project_type != "External":
 			self.create_task_and_assign()

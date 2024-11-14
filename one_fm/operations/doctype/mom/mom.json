@@ -56,7 +56,8 @@
   },
   {
    "fieldname": "section_break_3",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "POC Attendance"
   },
   {
    "fieldname": "attendees",
@@ -225,7 +226,7 @@
   {
    "fieldname": "general_attendance",
    "fieldtype": "Table",
-   "label": "General Attendees",
+   "label": "General Attendance",
    "options": "General Attendance"
   }
  ],
