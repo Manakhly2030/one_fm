@@ -1,42 +1,51 @@
 {
-  "creation": "2020-04-27 14:56:26.766154",
-  "doctype": "DocType",
-  "editable_grid": 1,
-  "engine": "InnoDB",
-  "field_order": ["poc_name", "poc_designation", "attended_meeting"],
-  "fields": [
-    {
-      "fieldname": "poc_name",
-      "fieldtype": "Link",
-      "in_list_view": 1,
-      "label": "POC Name",
-      "options": "Contact"
-    },
-    {
-      "default": "0",
-      "fieldname": "attended_meeting",
-      "fieldtype": "Check",
-      "in_list_view": 1,
-      "label": "Attended Meeting"
-    },
-    {
-      "fetch_from": "poc_name.designation",
-      "fieldname": "poc_designation",
-      "fieldtype": "Data",
-      "in_list_view": 1,
-      "label": "POC Designation",
-      "read_only": 1
-    }
-  ],
-  "istable": 1,
-  "modified": "2020-04-27 15:54:06.313386",
-  "modified_by": "Administrator",
-  "module": "Operations",
-  "name": "MOM POC",
-  "owner": "Administrator",
-  "permissions": [],
-  "quick_entry": 1,
-  "sort_field": "modified",
-  "sort_order": "DESC",
-  "track_changes": 1
+ "actions": [],
+ "creation": "2020-04-27 14:56:26.766154",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "poc_name",
+  "poc_designation",
+  "attended_meeting"
+ ],
+ "fields": [
+  {
+   "fieldname": "poc_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "POC Name",
+   "options": "Contact",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "attended_meeting",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Attended Meeting"
+  },
+  {
+   "fetch_from": "poc_name.designation",
+   "fieldname": "poc_designation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "POC Designation",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2024-11-13 11:25:04.691447",
+ "modified_by": "Administrator",
+ "module": "Operations",
+ "name": "MOM POC",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }
