@@ -225,12 +225,13 @@
   {
    "fieldname": "table_psuv",
    "fieldtype": "Table",
+   "label": "General Attendees",
    "options": "General Attendance"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-14 08:39:43.948556",
+ "modified": "2024-11-14 08:43:03.908498",
  "modified_by": "Administrator",
  "module": "Operations",
  "name": "MOM",
