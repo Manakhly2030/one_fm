@@ -16,7 +16,7 @@
   "section_break_3",
   "attendees",
   "general_attendance_section",
-  "table_psuv",
+  "general_attendance",
   "section_break_5",
   "discussion_topic",
   "meeting_duration",
@@ -223,7 +223,7 @@
    "label": "General Attendance"
   },
   {
-   "fieldname": "table_psuv",
+   "fieldname": "general_attendance",
    "fieldtype": "Table",
    "label": "General Attendees",
    "options": "General Attendance"
