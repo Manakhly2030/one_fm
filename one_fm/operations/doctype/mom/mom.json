@@ -15,6 +15,8 @@
   "date",
   "section_break_3",
   "attendees",
+  "general_attendance_section",
+  "table_psuv",
   "section_break_5",
   "discussion_topic",
   "meeting_duration",
@@ -214,11 +216,21 @@
    "fieldname": "discussion_brief",
    "fieldtype": "Long Text",
    "label": "Discussion Brief"
+  },
+  {
+   "fieldname": "general_attendance_section",
+   "fieldtype": "Section Break",
+   "label": "General Attendance"
+  },
+  {
+   "fieldname": "table_psuv",
+   "fieldtype": "Table",
+   "options": "General Attendance"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-11 20:45:25.576605",
+ "modified": "2024-11-14 08:39:43.948556",
  "modified_by": "Administrator",
  "module": "Operations",
  "name": "MOM",
