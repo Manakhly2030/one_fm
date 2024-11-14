@@ -1345,6 +1345,10 @@ def validate_item(doc, method):
         doc.item_barcode = doc.item_code
     if not doc.parent_item_group:
         doc.parent_item_group = "All Item Groups"
+
+    if doc.subitem_group == "Service":
+        doc.is_stock_item = 0
+        
     doc.description = final_description
     doc.change_request = False
     item_approval_workflow_notification(doc)
