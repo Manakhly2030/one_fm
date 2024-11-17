@@ -302,7 +302,20 @@ frappe.ui.form.on('Item', {
 		if(frm.doc.start_date>frm.doc.end_date){
 			frappe.throw(__('Start Date cannot be set at a date after End Date'))
 		}
-	}
+	},
+
+	
+	subitem_group: function(frm) {
+			// Check if the selected subitem group is "Service"
+			
+			if (frm.doc.subitem_group === "Service") {
+				frm.set_value('is_stock_item', 0);  // Uncheck maintain_stock
+				frm.set_df_property('is_stock_item', 'read_only', 1);  // Disable the field
+			} else {
+				frm.set_df_property('is_stock_item', 'read_only', 0);  // Enable the field if not "Service"
+			}
+		}
+
 })
 
 var set_item_field_property = function(frm) {
