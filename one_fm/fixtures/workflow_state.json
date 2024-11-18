@@ -3,6 +3,15 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2024-11-11 13:22:42.962256",
+  "name": "Pending Finance Approver",
+  "style": "",
+  "workflow_state_name": "Pending Finance Approver"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2024-02-18 20:16:27.544291",
   "name": "Pending Approver",
   "style": "",

@@ -225,7 +225,6 @@ doc_events = {
 		"on_cancel": "one_fm.purchase.doctype.request_for_material.request_for_material.update_completed_purchase_qty",
 		"after_insert": "one_fm.purchase.utils.set_quotation_attachment_in_po",
 		"validate":[
-			"one_fm.purchase.utils.set_po_approver",
 			"one_fm.overrides.purchase_order.validate_purchase_uom"
 		],
 		# 'on_update':"one_fm.purchase.utils.on_update",

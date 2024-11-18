@@ -93,3 +93,4 @@ one_fm.patches.v15_0.update_shift_request
 one_fm.patches.v15_0.add_task_assignments_to_form_field
 one_fm.patches.v15_0.disable_wrong_shift_request
 one_fm.patches.v15_0.update_job_offer_00057_erf
+one_fm.patches.v15_0.update_purchase_order_according_to_new_workflow
