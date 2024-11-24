@@ -78,7 +78,7 @@ class MOM(Document):
 		if len(self.action) > 0:
 			for issue in self.action:
 				op_task = frappe.new_doc("Task")
-				if not issue.subject:
+				if not issue.subject and issue.description:
 					op_task.subject = issue.description[:30]
 				else:
 					op_task.subject = issue.subject
