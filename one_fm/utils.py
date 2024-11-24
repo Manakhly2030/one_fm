@@ -21,6 +21,7 @@ from frappe.utils.user import get_users_with_role
 from frappe.permissions import has_permission
 from frappe.model.workflow import apply_workflow
 from frappe.desk.form import assign_to
+from frappe.desk.query_report import get_report_doc
 from frappe.model.naming import make_autoname
 from deep_translator import GoogleTranslator
 from frappe.utils import (
@@ -3644,4 +3645,28 @@ def send_work_anniversary_reminders():
                     others = [d for d in anniversary_persons if d != person]
                     reminder_text = get_work_anniversary_reminder_text(others)
                     send_work_anniversary_reminder(person_email, reminder_text, others, message, sender)
+
+
+def background_enqueue_run(report_name, filters=None, user=None):
+	"""run reports in background"""
+	if not user:
+		user = frappe.session.user
+	report = get_report_doc(report_name)
+	track_instance = \
+		frappe.get_doc({
+			"doctype": "Prepared Report",
+			"report_name": report_name,
+			"filters": json.dumps(json.loads(filters)),
+			"ref_report_doctype": report_name,
+			"report_type": report.report_type,
+			"query": report.query,
+			"module": report.module,
+		})
+	track_instance.insert(ignore_permissions=True)
+	frappe.db.commit()
+	return {
+		"name": track_instance.name,
+		"redirect_url": get_url_to_form("Prepared Report", track_instance.name)
+	}
+
                     
