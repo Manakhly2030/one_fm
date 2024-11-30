@@ -183,7 +183,7 @@ def check_pam_visa_approval_submission_six_half():
 
 
 def check_pam_visa_approval_submission_daily():
-    pam_visas = frappe.db.sql_list("select name from `tabPAM Visa` where pam_visa_approval_submitted=0 and pam_visa_approval_reminder2_start=0 and pam_visa_approval_reminder2_done=0 and pam_visa_approval_status!='No Response' and status='Apporved'")
+    pam_visas = frappe.db.sql_list("select name from `tabPAM Visa` where pam_visa_approval_submitted=0 and pam_visa_approval_reminder2_start=0 and pam_visa_approval_reminder2_done=0 and pam_visa_approval_status!='No Response' and pam_visa_status='Approved'")
 
     for pam_visa in pam_visas:
         pam_visa_doc = frappe.get_doc("PAM Visa", pam_visa)
