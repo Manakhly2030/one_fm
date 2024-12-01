@@ -21,6 +21,7 @@ class OverlappingShiftError(frappe.ValidationError):
 class ShiftRequestOverride(ShiftRequest):
     def validate(self):
         # ensure status is not pending
+        super().validate()
         if self.is_new():
             self.status='Draft'
         if self.status=='Pending Approval':
