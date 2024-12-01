@@ -1132,9 +1132,22 @@ def prepare_employee_schedules(project,old_start,old_end,new_start,new_end,durat
     Args:
         project: Valid Project
     """
-    previous_schedules = frappe.db.sql("""SELECT ts.employee,ts.employee_availability,ts.employee_name,ts.department,ts.date\
-        ,ts.operations_role,ts.post_abbrv,ts.shift,ts.shift_type,ts.site,ts.roster_type from `tabEmployee Schedule`ts,
-        `tabEmployee`emp where ts.project = '{}' and emp.status = "Active" and ts.date BETWEEN '{}' and '{}'""".format(project,old_start,old_end),as_dict=1)
+    previous_schedules = frappe.db.sql("""
+        SELECT 
+            ts.employee, ts.employee_availability, ts.employee_name, ts.department, ts.date,
+            ts.operations_role, ts.post_abbrv, ts.shift, ts.shift_type, ts.site, ts.roster_type
+        FROM 
+            `tabEmployee Schedule` ts
+        INNER JOIN 
+            `tabEmployee` emp 
+        ON 
+            ts.employee = emp.name
+        WHERE 
+            ts.project = %s 
+            AND emp.status = %s 
+            AND ts.date BETWEEN %s AND %s
+    """, (project, "Active", old_start, old_end), as_dict=1)
+    
     if previous_schedules:
         for each in previous_schedules:
             old_schedule_date = each.date
