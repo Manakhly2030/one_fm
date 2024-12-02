@@ -28,6 +28,7 @@ class JobOfferOverride(JobOffer):
         validate_mandatory_fields(job_applicant)
         self.job_offer_validate_attendance_by_timesheet()
         self.validate_job_offer_mandatory_fields()
+        self.reset_status_on_amend()
         # Set url qr code
         self.url_qr_code = get_qr_code(get_url(self.get_url()))
         # Validate day off
@@ -154,6 +155,10 @@ class JobOfferOverride(JobOffer):
         employee = self.get_onload('employee')
         if employee:
             frappe.throw(_("Not Allowed to Reject the Job Offer, it is linked with Employee {0}".format(employee)))
+
+    def reset_status_on_amend(self):
+        if self.amended_from and self.status == "Rejected":
+            self.status = "Awaiting Response" 
 
 def assign_to_onboarding_officer(self):
 	try:
