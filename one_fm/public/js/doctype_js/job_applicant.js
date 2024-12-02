@@ -601,7 +601,6 @@ frappe.ui.form.on('Job Applicant', {
 			method: 'one_fm.hiring.utils.get_interview_skill_and_question_set',
 			args: args,
 			callback: function (r) {
-				console.log(r.message)
 				if(r.message){
 					args['child_name'] = child_name;
 					args['feedback_exists'] = r.message[2] ? r.message[2] : '';
