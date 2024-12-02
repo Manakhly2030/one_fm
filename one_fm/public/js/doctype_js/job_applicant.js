@@ -601,6 +601,7 @@ frappe.ui.form.on('Job Applicant', {
 			method: 'one_fm.hiring.utils.get_interview_skill_and_question_set',
 			args: args,
 			callback: function (r) {
+				console.log(r.message)
 				if(r.message){
 					args['child_name'] = child_name;
 					args['feedback_exists'] = r.message[2] ? r.message[2] : '';
@@ -639,7 +640,7 @@ frappe.ui.form.on('Job Applicant', {
 				data: data
 			}
 		]
-		if(question_data && question_data.length > 0 && frm.doc.one_fm_hiring_method != "Bulk Recruitment"){
+		if(question_data && question_data.length > 0){
 			let question_fields = frm.events.get_fields_for_questions();
 			dialog_fields.push({
 				fieldname: 'questions',
