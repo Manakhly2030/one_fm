@@ -59,19 +59,27 @@ frappe.ui.form.on('MOM', {
 		}
 	},
 	refresh: function(frm){
-		if (!frappe.user_roles.includes("Projects Manager")){
+		if (!check_roles()){
 			set_project_query_for_non_project_manager(frm);
 		}
 	},
 	validate: function (frm){
 		if (frm.is_new()){
-			if (frm.doc.project_type != "External" && !frappe.user_roles.includes("Projects Manager")){
-				frappe.throw("Only Project managers are allowed to create MOM for Non-External Projects")
+			if (frm.doc.project_type != "External" && !check_roles()){
+				frappe.throw("You are not allowed to create MOM for Non-External Projects")
 			}
 		}
 	}
 
 });
+
+
+
+var check_roles = () => {
+	const rolesToCheck = ["Projects Manager", "Site Supervisor"];
+	const hasRole = rolesToCheck.some(role => frappe.user_roles.includes(role));
+	return hasRole
+}
 
 
 function get_poc_list(frm, doctype, name){
@@ -111,8 +119,8 @@ function get_project_type(frm, doctype, name){
 		callback: function(r) {
 			if(!r.exc) {
 				if(r.message.project_type != "External"){
-					if (!frappe.user_roles.includes("Projects Manager")){
-						frappe.throw("Only Project managers are allowed to create MOM for Non-External Projects")
+					if (!check_roles()){
+						frappe.throw("You are not allowed to create MOM for Non-External Projects")
 					}
 					if(r.message.users){
 						set_table_non_external(frm, r.message.users)
