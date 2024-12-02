@@ -225,6 +225,7 @@ class ERF(Document):
 			frappe.msgprint(_('Recruitment Manager Will Notified By Email.'))
 
 	def on_update_after_submit(self):
+		self.fix_erf_employee_indexing()
 		self.validate_total_required_candidates()
 		if self.workflow_state == "Accepted":
 			# self.validate_submit_to_hr()
@@ -360,6 +361,11 @@ class ERF(Document):
 			if not frappe.db.exists("Job Opening", {'one_fm_erf':self.name}):
 				create_job_opening_from_erf(self)
 		self.reload()
+
+	def fix_erf_employee_indexing(self):
+		if self.erf_employee:
+			for idx, row in enumerate(self.erf_employee, start=1):
+				row.idx = idx
 
 
 
