@@ -6241,6 +6241,22 @@
  },
  {
   "default_value": null,
+  "doc_type": "Skill Assessment",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "rating",
+  "is_system_generated": 0,
+  "modified": "2024-12-03 15:39:46.588582",
+  "module": null,
+  "name": "Skill Assessment-rating-reqd",
+  "property": "reqd",
+  "property_type": "Check",
+  "row_name": null,
+  "value": "0"
+ },
+ {
+  "default_value": null,
   "doc_type": "Routine Task",
   "docstatus": 0,
   "doctype": "Property Setter",
