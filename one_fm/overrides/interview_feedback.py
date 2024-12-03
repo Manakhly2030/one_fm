@@ -20,5 +20,5 @@ class InterviewFeedbackOverride(InterviewFeedback):
             frappe.log_error(frappe.get_traceback(), f"Error calculating average rating: {e}")
             self.average_rating = 0
     
-    def after_insert(self):
-        frappe.db.set_value("Job Applicant", self.job_applicant, "custom_interview_feedback_rating", self.average_rating)
+    def before_save(self):
+        frappe.db.set_value("Job Applicant", self.job_applicant, "applicant_rating", self.average_rating)
