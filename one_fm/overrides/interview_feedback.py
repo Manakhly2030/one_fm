@@ -24,10 +24,10 @@ class InterviewFeedbackOverride(InterviewFeedback):
             frappe.log_error(frappe.get_traceback(), f"Error calculating average rating: {e}")
             self.average_rating = 0
 
+        frappe.db.set_value("Job Applicant", self.job_applicant, "custom_interview_feedback_rating", self.average_rating)
+        frappe.db.set_value("Job Applicant", self.job_applicant, "custom_interview_feedback_percent", (self.average_rating / 5) * 100)
 
-        job_applicant = frappe.get_doc("Job Applicant", self.job_applicant)
-        job_applicant.db_set("custom_interview_feedback_rating", self.average_rating)
-        job_applicant.notify_update()
 
     def on_thrash(self):
         frappe.db.set_value('Job Applicant', self.job_applicant, 'custom_interview_feedback_rating', 0)
+        frappe.db.set_value("Job Applicant", self.job_applicant, "custom_interview_feedback_percent", 0)
