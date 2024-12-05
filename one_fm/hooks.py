@@ -117,7 +117,8 @@ doctype_js = {
     "Task": "public/js/doctype_js/task.js",
     "HD Ticket": "public/js/doctype_js/hd_ticket.js",
     "Appraisal": "public/js/doctype_js/appraisal.js",
-    "Employee Performance Feedback":"public/js/doctype_js/employee_performance_feedback.js"
+    "Employee Performance Feedback":"public/js/doctype_js/employee_performance_feedback.js",
+    "Contact": "public/js/doctype_js/contact.js"
 }
 doctype_list_js = {
 	"Job Applicant" : "public/js/doctype_js/job_applicant_list.js",
@@ -306,7 +307,8 @@ doc_events = {
 		]
 	},
 	"Contact": {
-		"on_update": "one_fm.accommodation.doctype.accommodation.accommodation.accommodation_contact_update"
+		"on_update": "one_fm.accommodation.doctype.accommodation.accommodation.accommodation_contact_update",
+        "validate": "one_fm.accommodation.doctype.accommodation.accommodation.validate_contact",
 	},
 	"Project": {
 		"validate": [
