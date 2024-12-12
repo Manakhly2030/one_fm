@@ -87,7 +87,7 @@ def get_staff_filters_data():
 @frappe.whitelist()
 def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_search_id=None, employee_search_name=None, project=None, site=None, shift=None, department=None, operations_role=None, designation=None, isOt=None, limit_start=0, limit_page_length=9999):
     try:
-        master_data, formatted_employee_data, post_count_data, employee_filters= {}, {}, {}, {"shift_working": "1"}
+        master_data, formatted_employee_data, post_count_data, employee_filters= {}, {}, {}, {}
         operations_roles_list = []
         employees = []
         asa_filters = "em.status = 'Active' and em.attendance_by_timesheet = '0' "
