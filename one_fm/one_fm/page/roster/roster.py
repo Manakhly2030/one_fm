@@ -134,6 +134,7 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
 
         if isOt:
             employee_filters.update({'employee_availability' : 'Working'})
+            employee_filters.update({"employee.shift_working": "1"})
             all_active_employees = frappe.db.sql("SELECT name from `tabEmployee` where status in ('Active','Vacation') and attendance_by_timesheet = '0' ",as_dict =1)
             all_active_employee_ids = [i.name for i in all_active_employees]
             employee_filters.update({'employee':['In',all_active_employee_ids]})
