@@ -206,18 +206,23 @@ def get_employees_on_leave_in_period(start_date, end_date):
 		Eg: [('HR-EMP-00002', '2024-04-08')] Considerring HR-EMP-00002 is leave on '2024-04-08'
 	"""
 
+
 	leaves = frappe.db.sql(f"""
-		select
+		SELECT 
 			employee, from_date, to_date
-        from
+		FROM 
 			`tabLeave Application`
-        where
-			from_date >= '{start_date}'
-			and
-			to_date <= '{end_date}'
-			and
-			status = 'Open'
-    """, as_dict=True)
+		WHERE 
+			(from_date >= '{start_date}' AND to_date <= '{end_date}' AND status IN ('Open', 'Approved'))
+			OR 
+			name IN (
+				SELECT DISTINCT leave_application 
+				FROM `tabAttendance` 
+				WHERE attendance_date >= '{start_date}'
+				AND attendance_date <= '{end_date}' 
+				AND status = 'On Leave'
+			)
+	""", as_dict=True)
 
 	return [
 		(leave.employee, (leave.from_date + timedelta(days=x)).strftime('%Y-%m-%d'))
