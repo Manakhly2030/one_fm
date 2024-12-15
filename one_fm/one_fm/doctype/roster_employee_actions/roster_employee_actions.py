@@ -8,7 +8,7 @@ from frappe.utils import nowdate, add_to_date, cstr, cint, getdate, get_link_to_
 from one_fm.processor import sendemail
 from frappe.permissions import get_doctype_roles
 import datetime
-from datetime import timedelta, datetime
+from datetime import timedelta
 from collections import OrderedDict
 
 class RosterEmployeeActions(Document):
