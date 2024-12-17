@@ -166,17 +166,32 @@ frappe.ui.form.on('Operations Shift', {
 			).addClass('btn-primary');
 		}
 	},
-	automate_roster: function (frm) {
-        // Check if the checkbox is checked
-        if (frm.doc.automate_roster) {
-            frappe.confirm(
-				__('Are you sure you want to enable this feature?'),
-                () => {
-                },
-                () => {
-                    frm.set_value('automate_roster', 0);
-                }
-            );
-        }
-    }
+	automate_roster: function(frm) {
+		// If the flag is set, do nothing to prevent looping
+		if (frm.__is_resetting_value) {
+			frm.__is_resetting_value = false;
+			return;
+		}
+		if (frm.doc.automate_roster) {
+			frappe.confirm(
+				__('Are you sure you want to enable automated rostering for this Operations Shift?'),
+				() => {
+				},
+				() => {
+					frm.__is_resetting_value = true;
+					frm.set_value('automate_roster', 0);
+				}
+			);
+		} else {
+			frappe.confirm(
+				__('Are you sure you want to disable automated rostering for this Operations Shift?'),
+				() => {
+				},
+				() => {
+					frm.__is_resetting_value = true;
+					frm.set_value('automate_roster', 1);
+				}
+			);
+		}
+	}
 });
