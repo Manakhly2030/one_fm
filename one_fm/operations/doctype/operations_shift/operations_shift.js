@@ -165,5 +165,18 @@ frappe.ui.form.on('Operations Shift', {
 				}
 			).addClass('btn-primary');
 		}
-	}
+	},
+	automate_roster: function (frm) {
+        // Check if the checkbox is checked
+        if (frm.doc.automate_roster) {
+            frappe.confirm(
+				__('Are you sure you want to enable this feature?'),
+                () => {
+                },
+                () => {
+                    frm.set_value('automate_roster', 0);
+                }
+            );
+        }
+    }
 });

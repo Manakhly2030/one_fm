@@ -59,6 +59,13 @@
    "options": "Shift Type"
   },
   {
+   "default": "0",
+   "description": "If checked, the system automatically creates Employee Schedules for all Employees having this as their default shift.",
+   "fieldname": "automate_roster",
+   "fieldtype": "Check",
+   "label": "Automate Roster"
+  },
+  {
    "fieldname": "section_break_12",
    "fieldtype": "Section Break"
   },
@@ -168,7 +175,7 @@
    "link_fieldname": "shift"
   }
  ],
- "modified": "2024-05-08 21:24:18.202969",
+ "modified": "2024-12-17 16:34:20.846883",
  "modified_by": "Administrator",
  "module": "Operations",
  "name": "Operations Shift",
