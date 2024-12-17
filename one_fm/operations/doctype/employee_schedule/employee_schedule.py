@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 from frappe import _
-from frappe.utils import cstr, add_days, getdate
+from frappe.utils import cstr, add_days, getdate, get_last_day
 from one_fm.utils import get_week_start_end, get_month_start_end
 from one_fm.processor import sendemail
 
@@ -19,6 +19,20 @@ class EmployeeSchedule(Document):
 		if not frappe.db.exists("Employee", {'status':'Active', 'name':self.employee}):
 			frappe.throw(f"{self.employee} - {self.employee_name} is not active and cannot be scheduled.")
 
+	def on_update(self):
+		if self.get_doc_before_save().employee_availability != "Day Off" and self.employee_availability == "Day Off":
+			start_date = self.date
+			end_date = get_last_day(start_date)
+			employee_schedule = frappe.get_value("Employee Schedule",
+				{
+					"employee": self.employee,
+					"day_off_ot": 1,
+					"date": ["between", [start_date, end_date]],
+				},
+				["name"], as_dict=True
+			)
+			if employee_schedule:
+				frappe.db.set_value("Employee Schedule", employee_schedule.name, "day_off_ot", 0)
 
 	def validate(self):
 		if self.employee_availability=='Working' and self.shift_type and self.date:
@@ -103,20 +117,20 @@ def is_operations_post_overfill(date, operations_shift, new_roster=0):
 	return {"operations_post_overfill": operations_post_overfill, "overfilled_by": total_staffs_rostered-no_of_posts}
 
 def validate_operations_post_overfill(no_of_schedules_on_date, operations_shift):
-    dates = False
-    for datevalue in no_of_schedules_on_date:
-        operations_post_overfill = is_operations_post_overfill(datevalue, operations_shift, no_of_schedules_on_date[datevalue])
-        if operations_post_overfill['operations_post_overfill']:
-            if not dates:
-                dates = str(datevalue)+"({0})".format(operations_post_overfill['overfilled_by'])
-            else:
-                dates += ', '+str(datevalue)+"({0})".format(operations_post_overfill['overfilled_by'])
-    if dates:
-        msg = _(
-            'The Operation post is overfilled by rostering employees for the operations shift {0} on {1}'
-            .format(operations_shift, dates)
-        )
-        frappe.throw(msg)
+	dates = False
+	for datevalue in no_of_schedules_on_date:
+		operations_post_overfill = is_operations_post_overfill(datevalue, operations_shift, no_of_schedules_on_date[datevalue])
+		if operations_post_overfill['operations_post_overfill']:
+			if not dates:
+				dates = str(datevalue)+"({0})".format(operations_post_overfill['overfilled_by'])
+			else:
+				dates += ', '+str(datevalue)+"({0})".format(operations_post_overfill['overfilled_by'])
+	if dates:
+		msg = _(
+			'The Operation post is overfilled by rostering employees for the operations shift {0} on {1}'
+			.format(operations_shift, dates)
+		)
+		frappe.throw(msg)
 
 @frappe.whitelist()
 def get_operations_posts(doctype, txt, searchfield, start, page_len, filters):
