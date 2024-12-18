@@ -804,6 +804,13 @@
     "parenttype": "DocType Layout"
    },
    {
+    "fieldname": "custom_is_reliever",
+    "label": "Is Reliever",
+    "parent": "Employee",
+    "parentfield": "fields",
+    "parenttype": "DocType Layout"
+   },
+   {
     "fieldname": "shift",
     "label": "Shift",
     "parent": "Employee",
