@@ -151,7 +151,8 @@ def get_shift_working_active_employees(start_date, end_date):
 
 	active_employees = frappe.db.sql("""
 		select
-			employee
+			employee,
+			relieving_date
 		from
 			`tabEmployee`
 		where
@@ -159,11 +160,11 @@ def get_shift_working_active_employees(start_date, end_date):
 			and
 			shift_working = 1
 	""", as_dict=1)
-
 	return [
 		(employee.employee, (start_date + timedelta(days=x)).strftime('%Y-%m-%d'))
 		for employee in active_employees
 		for x in range((end_date - start_date).days + 1)
+		if employee.relieving_date is None or (start_date + timedelta(days=x)) < employee.relieving_date
 	]
 
 def get_rostered_employees(start_date, end_date):
