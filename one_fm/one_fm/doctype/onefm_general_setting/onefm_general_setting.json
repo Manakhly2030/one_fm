@@ -154,6 +154,20 @@
    "fieldname": "enable_face_recognition_endpoint",
    "fieldtype": "Check",
    "label": "Enable Face Recognition Endpoint"
+  },
+  {
+   "bold": 1,
+   "fieldname": "roster_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Roster Settings"
+  },
+  {
+   "description": "Any Employee assigned outside their default shift allocation up to the number of times set here will be reported in the daily Default Shift Checker.",
+   "fieldname": "default_shift_checker_threshold",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Default Shift Checker Threshold",
+   "reqd": 1
   }
  ],
  "issingle": 1,
