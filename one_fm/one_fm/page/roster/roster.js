@@ -1230,10 +1230,13 @@ let attendance_abbr_map = {
 	'On Leave': 'OL',
 	'On Hold': 'OH'
 };
+
+let reliever_data;
+
 // Renders on get_roster_data function
 function render_roster(res, page, isOt) {
-
-	let { operations_roles_data, employees_data, total } = res;
+	let { operations_roles_data, employees_data,reliever,total } = res;
+	reliever_data =  reliever
 	page.pagination.total = total;
 	let b1 = performance.now();
 	let $rosterMonth = isOt ? $('.rosterOtMonth') : $('.rosterMonth');
@@ -3419,12 +3422,17 @@ function dayoff(page) {
 		let [employee, date] = i.split("|");
 		employees.push({ employee, date });
 	});
+	let reliever_options = reliever_data.map(item => `${item.employee_id} - ${item.employee_name}`).join("\n");
+
+
 	let date = frappe.datetime.add_days(frappe.datetime.nowdate(), '1');
 	let d = new frappe.ui.Dialog({
 		'title': 'Day Off',
 		'fields': [
 			{ 'label': 'Selected days only', 'fieldname': 'selected_dates', 'fieldtype': 'Check', 'default': 0 },
-			{ 'label': 'Repeat', 'fieldname': 'repeat', 'fieldtype': 'Select', 'depends_on': 'eval:doc.selected_dates==0', 'options': 'Does not repeat\nDaily\nWeekly\nMonthly\nYearly' },
+			{ 'label': 'Set Reliever', 'fieldname': 'set_reliever', 'fieldtype': 'Check', 'default': 0 },
+			{ 'label': 'Reliever', 'fieldname': 'selected_reliever', 'fieldtype': 'Select', 'options': reliever_options,'depends_on': 'eval:doc.set_reliever==1' },
+			{ 'label': 'Repeat', 'fieldname': 'repeat', 'fieldtype': 'Select', 'depends_on': 'eval:doc.selected_dates==0', 'options': 'Does not repeat\nWeekly\nMonthly' },
 			{ 'fieldtype': 'Section Break', 'fieldname': 'sb1', 'depends_on': 'eval:doc.repeat=="Weekly" && doc.selected_dates==0' },
 			{ 'label': 'Sunday', 'fieldname': 'sunday', 'fieldtype': 'Check' },
 			{ 'label': 'Wednesday', 'fieldname': 'wednesday', 'fieldtype': 'Check' },
@@ -3444,9 +3452,16 @@ function dayoff(page) {
 			let week_days = [];
 			let args = {};
 			let repeat_freq = '';
-			let { selected_dates, repeat, sunday, monday, tuesday, wednesday, thursday, friday, saturday, repeat_till, project_end_date } = d.get_values();
+			let { selected_dates,set_reliever,selected_reliever, repeat, sunday, monday, tuesday, wednesday, thursday, friday, saturday, repeat_till, project_end_date } = d.get_values();
 			args["selected_dates"] = selected_dates;
+			args["set_reliever"] = set_reliever;
 			args["employees"] = employees;
+
+			if(set_reliever == 0){
+				args['selected_reliever']=""
+			}else{
+				args['selected_reliever']=selected_reliever
+			}
 
 			if (selected_dates == 1) {
 				args["repeat"] = 0;
