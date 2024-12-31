@@ -10,8 +10,8 @@ frappe.pages['roster'].on_page_load = function (wrapper) {
 	load_js(page);
 
 	$(".mobile-edit").on("click", function () {
-        ;
-    })
+		;
+	})
 
 
 };
@@ -20,8 +20,8 @@ frappe.pages['roster'].on_page_load = function (wrapper) {
 function load_js(page) {
 	$(this).scrollTop(0);
 
-    window.clickcount = 0;
-    window.employees_list = [];
+	window.clickcount = 0;
+	window.employees_list = [];
 	window.isMonth = 1;
 	window.classgrtw = [];
 	window.classgrt = [];
@@ -709,6 +709,15 @@ function bind_events(page) {
 		//let $rosterWeek = $('.rosterWeek');
 		let $postWeek = $('.postWeek');
 		$postMonth.find(".hoverselectclass").on("click", function () {
+			// Loop through all rows and if there is a checked row, unselect all cells in that row.
+			$(this).closest("tbody").children("tr").each(function (i, cell) {
+				const checked_row = $(cell).find('input[name="selectallcheckbox"]:checked');
+				if (checked_row.length > 0) {
+					$(checked_row).prop('checked', false);
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
+
 			$(this).toggleClass("selectclass");
 			// If the id is not already in the array, add it. If it is, remove it
 
@@ -723,6 +732,15 @@ function bind_events(page) {
 		});
 
 		$postWeek.find(".hoverselectclass").on("click", function () {
+			// Loop through all rows and if there is a checked row, unselect all cells in that row.
+			$(this).closest("tbody").children("tr").each(function (i, cell) {
+				const checked_row = $(cell).find('input[name="selectallcheckbox"]:checked');
+				if (checked_row.length > 0) {
+					$(checked_row).prop('checked', false);
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
+
 			$(this).toggleClass("selectclass");
 			// If the id is not already in the array, add it. If it is, remove it
 
@@ -738,8 +756,17 @@ function bind_events(page) {
 
 		//add array on each of data select from calender
 		$rosterMonth.find(".hoverselectclass").on("click", function () {
-			$(this).toggleClass("selectclass");
+		   // Loop through all rows and if there is a checked row, unselect all cells in that row.
+		   $(this).closest("tbody").children("tr").each(function (i, cell) {
+				const checked_row = $(cell).find('input[name="selectallcheckbox"]:checked');
+				if (checked_row.length > 0) {
+					$(checked_row).prop('checked', false);
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
 
+			// select cell
+			$(this).toggleClass("selectclass");
 			//Show Day Off and Schedule Leave button if hidden for basic roster
 			if ($(".dayoff").is(":hidden")) {
 				$(".dayoff").show();
@@ -760,6 +787,15 @@ function bind_events(page) {
 		});
 
 		$rosterOtMonth.find(".hoverselectclass").on("click", function () {
+			// Loop through all rows and if there is a checked row, unselect all cells in that row.
+			$(this).closest("tbody").children("tr").each(function (i, cell) {
+				const checked_row = $(cell).find('input[name="selectallcheckbox"]:checked');
+				if (checked_row.length > 0) {
+					$(checked_row).prop('checked', false);
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
+
 			$(this).toggleClass("selectclass");
 
 			//Hide Day Off and schedule leave button for OT Roster
@@ -793,8 +829,10 @@ function bind_events(page) {
 
 		/*on checkbox select change*/
 		$postWeek.find(`input[name="selectallcheckbox"]`).on("change", function () {
-			if ($(this).is(":checked")) {
-				$(this).parent().parent().parent().children("td").children().not("label").each(function (i, v) {
+			let $checked_employee = $(this);
+			let selected_employee = $checked_employee.parent().parent().parent().attr('data-name');
+			if ($checked_employee.is(":checked")) {
+				$checked_employee.parent().parent().parent().children("td").children().not("label").each(function (i, v) {
 					let date = $(v).attr('data-date');
 					if (moment(date).isAfter(moment())) {
 						$(v).addClass("selectclass");
@@ -812,6 +850,15 @@ function bind_events(page) {
 				$(this).parent().parent().parent().children("td").children().not("label").removeClass("selectclass");
 				$(".Postfilterhideshow").addClass("d-none");
 			}
+			
+			// Check for rows that are not selected full and unselect cells in that row.
+			$checked_employee.closest("tbody").children("tr").each(function (i, cell) {
+				const unchecked_row = $(cell).find('input[name="selectallcheckbox"]:not(:checked)');
+				if (unchecked_row.length > 0) {
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
+
 			$(".selectclass").map(function () {
 
 				classgrt.push($(this).attr("data-selectid"));
@@ -821,7 +868,7 @@ function bind_events(page) {
 		});
 		/*on checkbox select change*/
 		$postMonth.find(`input[name="selectallcheckbox"]`).on("change", function () {
-			if ($(this).is(":checked")) {
+		  	if ($(this).is(":checked")) {
 				$(this).parent().parent().parent().children("td").children().not("label").each(function (i, v) {
 					let date = $(v).attr('data-date');
 					if (moment(date).isAfter(moment())) {
@@ -839,9 +886,19 @@ function bind_events(page) {
 				$(this).parent().parent().parent().children("td").children().not("label").removeClass("selectclass");
 				$(".Postfilterhideshow").addClass("d-none");
 			}
+
+			// Check for rows that are not selected full and unselect cells in that row.
+			$(this).closest("tbody").children("tr").each(function (i, cell) {
+				const unchecked_row = $(cell).find('input[name="selectallcheckbox"]:not(:checked)');
+				if (unchecked_row.length > 0) {
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
+
+
 			$(".selectclass").map(function () {
 
-			    classgrt.push($(this).attr("data-selectid"));
+				classgrt.push($(this).attr("data-selectid"));
 				classgrt = [... new Set(classgrt)];
 			});
 		});
@@ -880,8 +937,10 @@ function bind_events(page) {
 		// 		// }
 		// 	});
 		// });
-		//on checkbox select change
+		//on checkbox select change        
 		$rosterMonth.find(`input[name="selectallcheckbox"]`).on("change", function () {
+			let $checked_employee = $(this);
+			let selected_employee = $checked_employee.parent().parent().parent().attr('data-name');
 
 			//Show Day Off and Schedule Leave button if hidden for basic roster
 			if ($(".dayoff").is(":hidden")) {
@@ -891,8 +950,8 @@ function bind_events(page) {
 				$(".scheduleleave").show();
 			}
 
-			if ($(this).is(":checked")) {
-				$(this).closest('tr').children("td").children().not("label").each(function (i, v) {
+			if ($checked_employee.is(":checked")) {
+				$checked_employee.closest('tr').children("td").children().not("label").each(function (i, v) {
 					
 					let [employee, date] = $(v).attr('data-selectid').split('|');
 					classgrt.push($(v).attr('data-selectid'));
@@ -913,6 +972,16 @@ function bind_events(page) {
 				$(this).closest('tr').children("td").children().not("label").removeClass("selectclass");
 				$(".filterhideshow").addClass("d-none");
 			}
+			
+			// Check for rows that are not selected full and unselect cells in that row.
+			$checked_employee.closest("tbody").children("tr").each(function (i, cell) {
+				const unchecked_row = $(cell).find('input[name="selectallcheckbox"]:not(:checked)');
+				if (unchecked_row.length > 0) {
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});;
+
+
 			$(".selectclass").map(function () {
 
 				classgrt.push($(this).attr("data-selectid"));
@@ -930,7 +999,8 @@ function bind_events(page) {
 			});
 		});
 		$rosterOtMonth.find(`input[name="selectallcheckbox"]`).on("change", function () {
-
+			let $checked_employee = $(this);
+			
 			//Hide Day Off and schedule leave button for OT Roster
 			$(".dayoff").hide();
 			$(".scheduleleave").hide();
@@ -954,6 +1024,15 @@ function bind_events(page) {
 				$(this).closest('tr').children("td").children().not("label").removeClass("selectclass");
 				$(".filterhideshow").addClass("d-none");
 			}
+			
+			// Check for rows that are not selected full and unselect cells in that row.
+			$(this).closest("tbody").children("tr").each(function (i, cell) {
+				const unchecked_row = $(cell).find('input[name="selectallcheckbox"]:not(:checked)');
+				if (unchecked_row.length > 0) {
+					$(cell).find("div").removeClass("selectclass");
+				}
+			});
+
 			$(".selectclass").map(function () {
 
 				classgrt.push($(this).attr("data-selectid"));
@@ -999,24 +1078,24 @@ function bind_events(page) {
 	window.employees_list = [];
 	bind_search_bar_event(page);
 
-    // manage employee selection
+	// manage employee selection
 
 	$('.checkboxcontainer.simplecheckbox').click((e)=>{
-	    if(window.clickcount>0){
-	        window.clickcount = 0;
-	    } else {
-	        let employee = e.target.parentNode.parentNode.parentNode.getAttributeNode('data-name').value;
-            if(window.employees_list.includes(employee)){
-                window.employees_list = window.employees_list.filter(function(value, index, arr){
-                    return value != employee;
-                });
-            } else {
-                window.employees_list.push(employee);
-            }
-            window.clickcount = window.clickcount + 1
-	    }
+		if(window.clickcount>0){
+			window.clickcount = 0;
+		} else {
+			let employee = e.target.parentNode.parentNode.parentNode.getAttributeNode('data-name').value;
+			if(window.employees_list.includes(employee)){
+				window.employees_list = window.employees_list.filter(function(value, index, arr){
+					return value != employee;
+				});
+			} else {
+				window.employees_list.push(employee);
+			}
+			window.clickcount = window.clickcount + 1
+		}
 
-    })
+	})
 }
 
 function bind_search_bar_event(page) {
@@ -1095,16 +1174,16 @@ function get_roster_data(page, isOt) {
 		employee_search_id = page.employee_search_id;
 	}
 	let {start_date, end_date} = page;
-	let { project, site, shift, department, operations_role, designation } = page.filters;
+	let { project, site, shift, department, operations_role, designation, relievers } = page.filters;
 	let { limit_start, limit_page_length } = page.pagination;
-	if (project || site || shift || department || operations_role || designation){
+	if (project || site || shift || department || operations_role || designation || relievers){
 
 		$('#cover-spin').show(0);
 		frappe.call({
 			method: "one_fm.one_fm.page.roster.roster.get_roster_view", //dotted path to server method
 			type: "POST",
 			args: { start_date, end_date, employee_search_id, employee_search_name, project, site,
-				shift, department, operations_role, designation, isOt, limit_start, limit_page_length
+				shift, department, operations_role, designation, relievers, isOt, limit_start, limit_page_length 
 			},
 			callback: function(res) {
 				// code snippet
@@ -1804,6 +1883,7 @@ function setup_filters(page) {
 			get_departments(page);
 			get_operations_posts(page);
 			get_designations(page);
+			get_relievers(page);
 		})
 		.then(r => {
 			get_roster_data(page);
@@ -1950,6 +2030,21 @@ function get_designations(page){
 		.catch(e => {
 			;
 		})
+}
+function get_relievers(page){
+	let parent = $('[data-page-route="roster"] #rosteringrelieverselect');
+	let reliever_data = [
+		{'id': 'True', 'text': 'Relievers Only'},
+		{'id': 'False', 'text': 'Non Relievers Only'},
+	];
+	parent.select2({ data: reliever_data });
+	$(parent).on('select2:select', function (e) {
+		page.filters.relievers = $(this).val();
+		let element = get_wrapper_element().slice(1);
+
+		page[element](page);
+	});
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2520,7 +2615,8 @@ function setup_staff_filters(page) {
 		designation: '',
 		operations_role: '',
 		employee_search_name: '',
-		employee_search_id: ''
+		employee_search_id: '',
+		relievers: ''
 	};
 	let pagination = {
 		limit_start: 0,
@@ -3169,7 +3265,7 @@ function schedule_change_post(page) {
 			}
 
 			if (!employees){
-			    frappe.throw(__('Please select employees to roster.'))
+				frappe.throw(__('Please select employees to roster.'))
 			}
 			// update fields
 			if(!data.project_end_date){data.project_end_date=0}
@@ -3407,185 +3503,185 @@ function dayoff(page) {
 
 // Edit mobile number
 function editMobileNumber(){
-    employees_pk = $(".datatablecjeckbox:checked").map(function () {
-        return $(this).attr("data-employee-id");
-    }).get();
+	employees_pk = $(".datatablecjeckbox:checked").map(function () {
+		return $(this).attr("data-employee-id");
+	}).get();
 	const table_fields = [
-        {
-            fieldname: "employee", fieldtype: "Link",
-            in_list_view: 1, label: "Employee",
-            options: "Employee", reqd: 1
-        },
-        {
-            fieldname: "employee_id", fieldtype: "Data",
-            in_list_view: 1, label: "Employee ID", reqd:1,
-            read_only: 1, depends_on: "employee",
-            fetch_from: "employee.employee_id"
-        },
-        {
-            fieldname: "employee_name", fieldtype: "Data",
-            in_list_view: 1, label: "Name", reqd:1,
-            read_only: 1, depends_on: "employee",
-            fetch_from: "employee.employee_name"
-        }
-    ];
+		{
+			fieldname: "employee", fieldtype: "Link",
+			in_list_view: 1, label: "Employee",
+			options: "Employee", reqd: 1
+		},
+		{
+			fieldname: "employee_id", fieldtype: "Data",
+			in_list_view: 1, label: "Employee ID", reqd:1,
+			read_only: 1, depends_on: "employee",
+			fetch_from: "employee.employee_id"
+		},
+		{
+			fieldname: "employee_name", fieldtype: "Data",
+			in_list_view: 1, label: "Name", reqd:1,
+			read_only: 1, depends_on: "employee",
+			fetch_from: "employee.employee_name"
+		}
+	];
 
-    let d = new frappe.ui.Dialog({
-        title: 'Enter details',
-        fields: [
-            {
-                label: 'First Name',
-                fieldname: 'first_name',
-                fieldtype: 'Data'
-            },
-            {
-                label: 'Last Name',
-                fieldname: 'last_name',
-                fieldtype: 'Data'
-            },
-            {
-                fieldname: "employees",
-                fieldtype: "Table",
-                label: "Employees",
+	let d = new frappe.ui.Dialog({
+		title: 'Enter details',
+		fields: [
+			{
+				label: 'First Name',
+				fieldname: 'first_name',
+				fieldtype: 'Data'
+			},
+			{
+				label: 'Last Name',
+				fieldname: 'last_name',
+				fieldtype: 'Data'
+			},
+			{
+				fieldname: "employees",
+				fieldtype: "Table",
+				label: "Employees",
 //                cannot_add_rows: true,
-                cannot_delete_rows: true,
-                in_place_edit: true,
-                reqd: 1,
-                data: [],
-                fields: table_fields
-            }
-        ],
-        primary_action_label: 'Submit',
-        primary_action(values) {
+				cannot_delete_rows: true,
+				in_place_edit: true,
+				reqd: 1,
+				data: [],
+				fields: table_fields
+			}
+		],
+		primary_action_label: 'Submit',
+		primary_action(values) {
 
-            d.hide();
-        }
-    });
+			d.hide();
+		}
+	});
 
-    d.show();
+	d.show();
 
-    employees_pk.forEach((item, i) => {
-        d.fields_dict.employees.df.data.push(
-            { employee: item}
-        );
-    });
-    d.fields_dict.employees.grid.refresh();
+	employees_pk.forEach((item, i) => {
+		d.fields_dict.employees.df.data.push(
+			{ employee: item}
+		);
+	});
+	d.fields_dict.employees.grid.refresh();
 }
 
 
 function editSingleEmployeeData(){
-    let d = new frappe.ui.Dialog({
-        title: 'Update Employee Record',
-        fields: [
-            {
-                label: 'Employee',
-                fieldname: 'employee',
-                fieldtype: 'Link',
-                options: "Employee",
-                reqd:1,
-                ignore_user_permissions: 1,
-                change: function (x) {
-                    employee_pk = d.fields_dict.employee.value;
-                    if(employee_pk){
-                    frappe.xcall('one_fm.one_fm.page.roster.roster.get_employee_detail', { employee_pk })
-                        .then(res => {
-                            d.fields_dict.employee_id.value = res.employee_id;
-                            d.fields_dict.employee_name.value = res.employee_name;
-                            d.fields_dict.enrolled.value = res.enrolled;
-                            d.fields_dict.cell_number.value = res.cell_number;
-                            d.fields_dict.employee_id.refresh();
-                            d.fields_dict.employee_name.refresh();
-                            d.fields_dict.enrolled.refresh();
-                            d.fields_dict.cell_number.refresh();
-                        });
+	let d = new frappe.ui.Dialog({
+		title: 'Update Employee Record',
+		fields: [
+			{
+				label: 'Employee',
+				fieldname: 'employee',
+				fieldtype: 'Link',
+				options: "Employee",
+				reqd:1,
+				ignore_user_permissions: 1,
+				change: function (x) {
+					employee_pk = d.fields_dict.employee.value;
+					if(employee_pk){
+					frappe.xcall('one_fm.one_fm.page.roster.roster.get_employee_detail', { employee_pk })
+						.then(res => {
+							d.fields_dict.employee_id.value = res.employee_id;
+							d.fields_dict.employee_name.value = res.employee_name;
+							d.fields_dict.enrolled.value = res.enrolled;
+							d.fields_dict.cell_number.value = res.cell_number;
+							d.fields_dict.employee_id.refresh();
+							d.fields_dict.employee_name.refresh();
+							d.fields_dict.enrolled.refresh();
+							d.fields_dict.cell_number.refresh();
+						});
 
-                    }
-                }
-            },
-            {
-                label: 'Employee ID',
-                fieldname: 'employee_id',
-                fieldtype: 'Data',
-                depends_on: 'employee',
-                read_only: 1
-            },
-            {
-                label: 'Employee Name',
-                fieldname: 'employee_name',
-                fieldtype: 'Data',
-                depends_on: 'employee',
-                read_only: 1
-            },
+					}
+				}
+			},
+			{
+				label: 'Employee ID',
+				fieldname: 'employee_id',
+				fieldtype: 'Data',
+				depends_on: 'employee',
+				read_only: 1
+			},
+			{
+				label: 'Employee Name',
+				fieldname: 'employee_name',
+				fieldtype: 'Data',
+				depends_on: 'employee',
+				read_only: 1
+			},
 
-            {
-               fieldname: "column_break0",
-               fieldtype: "Column Break"
-            },
-            {
-                label: 'Phone Number',
-                fieldname: 'cell_number',
-                fieldtype: 'Data',
-                depends_on: 'employee',
-                read_only: 1
-            },
-            {
-                label: 'Enrolled',
-                fieldname: 'enrolled',
-                fieldtype: 'Data',
-                depends_on: 'employee',
-                read_only: 1
-            },
-            {
-                label: '<i style="color:red">Action</i>',
-                fieldname: 'action_type',
-                fieldtype: 'Select',
-                depends_on: 'employee',
-                options: ["Update Phone Number", "Reset Enrollment"],
-                reqd: 1,
-            },
-            {
-                label: 'New Phone Number',
-                fieldname: 'new_phone_number',
-                fieldtype: 'Data',
-                depends_on: "eval:doc.action_type=='Update Phone Number'",
-                options: ""
-            },
+			{
+			   fieldname: "column_break0",
+			   fieldtype: "Column Break"
+			},
+			{
+				label: 'Phone Number',
+				fieldname: 'cell_number',
+				fieldtype: 'Data',
+				depends_on: 'employee',
+				read_only: 1
+			},
+			{
+				label: 'Enrolled',
+				fieldname: 'enrolled',
+				fieldtype: 'Data',
+				depends_on: 'employee',
+				read_only: 1
+			},
+			{
+				label: '<i style="color:red">Action</i>',
+				fieldname: 'action_type',
+				fieldtype: 'Select',
+				depends_on: 'employee',
+				options: ["Update Phone Number", "Reset Enrollment"],
+				reqd: 1,
+			},
+			{
+				label: 'New Phone Number',
+				fieldname: 'new_phone_number',
+				fieldtype: 'Data',
+				depends_on: "eval:doc.action_type=='Update Phone Number'",
+				options: ""
+			},
 
-        ],
-        primary_action_label: 'Submit',
-        primary_action(values) {
-            // action to perform if Yes is selected
-            d.hide();
-            makeCall(values);
-        }
-    });
+		],
+		primary_action_label: 'Submit',
+		primary_action(values) {
+			// action to perform if Yes is selected
+			d.hide();
+			makeCall(values);
+		}
+	});
 
-    d.show();
+	d.show();
 }
 
 
 function makeCall(argsObject){
-    frappe.confirm('Are you sure you want to proceed?',
-        () => {
-            let postvalue = {employee_id: argsObject.employee_id};
-            if (argsObject.action_type === 'Update Phone Number') {
-                postvalue.field = 'cell_number';
-                postvalue.value = argsObject.new_phone_number;
-            } else {
-                postvalue.field = 'enrolled';
-                postvalue.value = 0;
-            }
-            frappe.call({
-                method: "one_fm.api.v1.utils.update_employee", //dotted path to server method
-                args: postvalue,
-                callback: function(r) {
-                    // code snippet
-                    frappe.msgprint(r.message);
-                }
-            });
-        }, () => {
-            // action to perform if No is selected
-    })
+	frappe.confirm('Are you sure you want to proceed?',
+		() => {
+			let postvalue = {employee_id: argsObject.employee_id};
+			if (argsObject.action_type === 'Update Phone Number') {
+				postvalue.field = 'cell_number';
+				postvalue.value = argsObject.new_phone_number;
+			} else {
+				postvalue.field = 'enrolled';
+				postvalue.value = 0;
+			}
+			frappe.call({
+				method: "one_fm.api.v1.utils.update_employee", //dotted path to server method
+				args: postvalue,
+				callback: function(r) {
+					// code snippet
+					frappe.msgprint(r.message);
+				}
+			});
+		}, () => {
+			// action to perform if No is selected
+	})
 }
 
 
