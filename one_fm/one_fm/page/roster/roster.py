@@ -10,7 +10,7 @@ from itertools import product
 from one_fm.api.notification import create_notification_log
 from one_fm.api.v1.utils import response
 from one_fm.utils import query_db_list
-
+from distutils.util import strtobool
 
 
 @frappe.whitelist(allow_guest=True)
@@ -85,7 +85,7 @@ def get_staff_filters_data():
 
 
 @frappe.whitelist()
-def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_search_id=None, employee_search_name=None, project=None, site=None, shift=None, department=None, operations_role=None, designation=None, isOt=None, limit_start=0, limit_page_length=9999):
+def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_search_id=None, employee_search_name=None, project=None, site=None, shift=None, department=None, operations_role=None, designation=None, relievers=False, isOt=None, limit_start=0, limit_page_length=9999):
     try:
         master_data, formatted_employee_data, post_count_data, employee_filters= {}, {}, {}, {}
         operations_roles_list = []
@@ -107,7 +107,10 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
             employee_filters.update({'employee_name': ("like", "%" + employee_search_name + "%")})
             exited_employee_filters += f""" and employee_name LIKE "%{employee_search_name}%" """
             asa_filters+=f'and asa.employee_name LIKE "%{employee_search_name}%"'
-
+        if relievers:
+            employee_filters.update({'custom_is_reliever': strtobool(relievers)})
+            exited_employee_filters += f""" and custom_is_reliever={strtobool(relievers)} """
+            asa_filters+=f' and em.custom_is_reliever={strtobool(relievers)}'
         if project:
             employee_filters.update({'project': project})
             exited_employee_filters += f""" and project =  "{project}" """
@@ -134,7 +137,8 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
 
         if isOt:
             employee_filters.update({'employee_availability' : 'Working'})
-            all_active_employees = frappe.db.sql("SELECT name from `tabEmployee` where status in ('Active','Vacation') and attendance_by_timesheet = '0' and shift_working= '1'",as_dict =1)
+            reliever_filter = f"and custom_is_reliever={strtobool(relievers)}" if relievers else ""
+            all_active_employees = frappe.db.sql(f"SELECT name from `tabEmployee` where status in ('Active','Vacation') and attendance_by_timesheet = '0' and shift_working= '1' {reliever_filter}",as_dict =1)
             all_active_employee_ids = [i.name for i in all_active_employees]
             employee_filters.update({'employee':['In',all_active_employee_ids]})
             employees = frappe.db.get_list("Employee Schedule", employee_filters, ["distinct employee", "employee_name"], order_by="employee_name asc" ,limit_start=limit_start, limit_page_length=limit_page_length, ignore_permissions=True)
@@ -163,6 +167,7 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
                 if len(employees_asa) > 0:
                     employees.extend(employees_asa)
                     employees = filter_redundant_employees(employees)
+
             master_data.update({'total': len(employees)})
             employee_filters.pop('status', None)
             employee_filters.pop('shift_working', None)
@@ -179,6 +184,9 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
             employee_filters.update({'operations_role': operations_role})
         if designation:
             employee_filters.pop('designation', None)
+        reliever = frappe.db.get_list('Employee', fields=['*'], filters={'custom_is_reliever': 1})
+        if relievers:
+            employee_filters.pop('custom_is_reliever', None)
 
         #------------------- Fetch Operations Roles ------------------------#
         operations_roles_list = frappe.db.get_list("Post Schedule", employee_filters, ["distinct operations_role", "post_abbrv"], ignore_permissions=True)
@@ -195,7 +203,7 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
 
         #----------------- Get Operations Role count and check fill status -------------------#
         post_map = PostMap(start=start_date,end=end_date,operations_roles_list=operations_roles_list,filters=employee_filters)
-        master_data.update({'operations_roles_data': post_map.template})
+        master_data.update({'operations_roles_data': post_map.template,'reliever':reliever})
         response("Success", 200, master_data)
     except Exception as e:
         # print(frappe.get_traceback())

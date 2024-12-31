@@ -18,6 +18,7 @@
   "column_break_yxhnr",
   "site_supervisor",
   "site_supervisor_name",
+  "site_supervisor_user",
   "section_break_h7sd9",
   "employees_not_rostered"
  ],
@@ -71,6 +72,7 @@
   {
    "fieldname": "employees_not_rostered",
    "fieldtype": "Table",
+   "ignore_user_permissions": 1,
    "label": "Employees Not Rostered",
    "options": "Employees Not Rostered"
   },
@@ -114,11 +116,20 @@
    "in_standard_filter": 1,
    "label": "Site Supervisor",
    "options": "Employee"
+  },
+  {
+   "fetch_from": "site_supervisor.user_id",
+   "fetch_if_empty": 1,
+   "fieldname": "site_supervisor_user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Site Supervisor User",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-14 15:53:59.124311",
+ "modified": "2024-12-25 10:57:14.741275",
  "modified_by": "Administrator",
  "module": "one_fm",
  "name": "Roster Employee Actions",
