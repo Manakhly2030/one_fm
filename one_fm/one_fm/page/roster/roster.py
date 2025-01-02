@@ -1099,7 +1099,10 @@ def dayoff(employees, selected_dates=0,selected_reliever=None, repeat=0, repeat_
                        FROM `tabEmployee Schedule`
                        WHERE `employee` = '{employee['employee']}' AND `date` = '{employee['date']}'
                    """   
-                roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                try:
+                    roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                except:
+                    roster_data = get_shift_details_of_employee(employee['employee'],date)
                 roster_list.append(roster_data)
                 if getdate(date)>getdate(today()):
                     name = f"{date}_{employee['employee']}_{roster_type}"
@@ -1146,10 +1149,13 @@ def dayoff(employees, selected_dates=0,selected_reliever=None, repeat=0, repeat_
                                     SELECT *
                                     FROM `tabEmployee Schedule`
                                     WHERE `name` = '{name}'
-                                """   
-                                roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                                """  
+                                try:
+                                    roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                                except:    
+                                    roster_data = get_shift_details_of_employee(employee['employee'],date.date())
                                 if roster_data not in roster_list:
-                                    roster_list.append(roster_data)                                
+                                    roster_list.append(roster_data)
                                 update_day_off_ot = frappe.db.get_value("Employee Schedule", 
                                 {
                                     "employee": employee["employee"],
@@ -1184,9 +1190,13 @@ def dayoff(employees, selected_dates=0,selected_reliever=None, repeat=0, repeat_
                                     FROM `tabEmployee Schedule`
                                     WHERE `name` = '{name}'
                                 """   
-                                roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                                try:
+                                    roster_data = frappe.db.sql(emp_query, as_dict=True)[0]  
+                                except:
+                                    roster_data = get_shift_details_of_employee(employee['employee'],date.date())
                                 if roster_data not in roster_list:
-                                    roster_list.append(roster_data)      
+                                    roster_list.append(roster_data)
+                                    
                                 update_day_off_ot = frappe.db.get_value("Employee Schedule", 
                                 {
                                     "employee": employee["employee"],
@@ -1246,6 +1256,25 @@ def releiver_roster_assignment(reliver_emp,roster_list):
             employees = [{"employee":reliver_emp,"date":date}]
             extreme_schedule(employees, shift, operations_role, otRoster, start_date, end_date, keep_days_off, day_off_ot,
             request_employee_schedule, employee_list,selected_reliever)
+
+def get_shift_details_of_employee(emp,date):
+    emp_project, emp_site, emp_shift,designation = frappe.db.get_value("Employee", emp, ["project", "site", "shift","Designation"])
+    operations_shift = frappe.get_doc("Operations Shift",emp_shift, ignore_permissions=True)
+    start_datetime = datetime.strptime(f"{date} {operations_shift.start_time}", '%Y-%m-%d %H:%M:%S')
+    end_datetime = datetime.strptime(f"{date} {operations_shift.end_time}", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime(f"{date}", '%Y-%m-%d')
+    operation_role = frappe.get_value(
+    "Operations Role",
+    filters={
+        "shift": emp_shift,
+        "project": emp_project,
+        "post_name": designation
+    },
+    fieldname="name"
+)
+    dict_value = {'date':date,'shift':emp_shift,'operations_role':operation_role,'start_datetime':start_datetime,'end_datetime':end_datetime}
+    return dict_value
+
 
 
 @frappe.whitelist()
