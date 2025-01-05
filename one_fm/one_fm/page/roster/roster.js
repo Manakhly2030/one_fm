@@ -3425,7 +3425,6 @@ function dayoff(page) {
 
 
 	let date = frappe.datetime.add_days(frappe.datetime.nowdate(), '1');
-	alert()
 	let d = new frappe.ui.Dialog({
 		'title': 'Day Off',
 		'fields': [
