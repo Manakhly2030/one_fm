@@ -1118,30 +1118,10 @@ def dayoff(employees, selected_dates=0,selected_reliever=None, repeat=0, repeat_
                     if update_day_off_ot:
                         frappe.db.set_value("Employee Schedule", update_day_off_ot, "day_off_ot", 0)
         else:
-            if repeat and repeat_freq in ["Daily", "Weekly", "Monthly", "Yearly"]:
+            if repeat and repeat_freq in ["Weekly", "Monthly"]:
                 end_date = None
                 if repeat_till and not cint(project_end_date):
                     end_date = repeat_till
-
-                if repeat_freq == "Daily":
-                    for employee in json.loads(employees):
-                        if cint(project_end_date):
-                            project = frappe.db.get_value("Employee", {'employee': employee["employee"]}, ["project"])
-                            if frappe.db.exists("Contracts", {'project': project}):
-                                contract, end_date = frappe.db.get_value("Contracts", {'project': project}, ["name", "end_date"])
-                                if not end_date:
-                                    frappe.throw(_("No end date set for contract {contract}".format(contract=contract)))
-                            else:
-                                frappe.throw(_("No contract linked with project {project}".format(project=project)))
-                        for date in	pd.date_range(start=employee["date"], end=end_date):
-                            if getdate(date)>getdate(today()):
-                                name = f"{date.date()}_{employee['employee']}_{roster_type}"
-                                id_list.append(name)
-                                querycontent += f"""(
-                                    "{name}", "{employee["employee"]}", "{date.date()}", "", "", "",
-                                    '', "Day Off", "", "", "Basic",
-                                    0, "{owner}", "{owner}", "{creation}", "{creation}"
-                                ),"""
 
                 elif repeat_freq == "Weekly":
                     for employee in json.loads(employees):
