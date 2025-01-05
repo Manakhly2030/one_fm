@@ -185,7 +185,7 @@
       "doctype":"Assignment Rule",
       "document_type":"Post Scheduler Checker",
       "due_date_based_on":null,
-      "field":"site_supervisor_name",
+      "field":"site_supervisor_user",
       "is_assignment_rule_with_workflow":0,
       "last_user":null,
       "modified":"2024-12-23 09:00:50.687088",
