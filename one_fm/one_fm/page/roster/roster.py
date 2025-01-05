@@ -1122,8 +1122,7 @@ def dayoff(employees, selected_dates=0,selected_reliever=None, repeat=0, repeat_
                 end_date = None
                 if repeat_till and not cint(project_end_date):
                     end_date = repeat_till
-
-                elif repeat_freq == "Weekly":
+                if repeat_freq == "Weekly":
                     for employee in json.loads(employees):
                         if cint(project_end_date):
                             project = frappe.db.get_value("Employee", {'employee': employee["employee"]}, ["project"])
