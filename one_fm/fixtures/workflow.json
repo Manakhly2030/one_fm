@@ -1459,7 +1459,7 @@
   "send_email_alert": 0,
   "states": [
    {
-    "allow_edit": "Purchase Officer",
+    "allow_edit": "Procurement Manager",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -1474,7 +1474,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Purchase Manager",
+    "allow_edit": "Procurement Manager",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -1483,13 +1483,13 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
-    "state": "Pending Purchase Manager",
+    "state": "Procurement Manager",
     "update_field": null,
     "update_value": null,
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Finance PO Approver",
+    "allow_edit": "Procurement Manager",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -1504,7 +1504,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Purchase User",
+    "allow_edit": "Procurement Manager",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -1519,7 +1519,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Purchase User",
+    "allow_edit": "Procurement Manager",
     "avoid_status_override": 0,
     "doc_status": "1",
     "is_optional_state": 0,
