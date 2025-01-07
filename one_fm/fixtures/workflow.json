@@ -1459,7 +1459,7 @@
   "send_email_alert": 0,
   "states": [
    {
-    "allow_edit": "Procurement Manager",
+    "allow_edit": "Purchase Officer",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
