@@ -1366,8 +1366,8 @@ def create_employee_schedule():
     """
     # Determine the target month (month after next)
     today = frappe.utils.nowdate()
-    target_month_start = get_first_day(add_months(today, 2))
-    target_month_end = get_last_day(add_months(today, 2))
+    target_month_start = get_first_day(add_months(today, 1))
+    target_month_end = get_last_day(add_months(today, 1))
 
     shifts_with_auto_roster = frappe.get_all(
     "Operations Shift",
@@ -1456,6 +1456,7 @@ def create_or_update_schedule_for_employee(employee, date, availability, operati
             schedule_doc.end_datetime = end_datetime
             schedule_doc.modified_by = owner
             schedule_doc.modified = creation
+            schedule_doc.reload()
             schedule_doc.save(ignore_permissions=True)
         else:
             # Create a new record
