@@ -1454,9 +1454,6 @@ def create_or_update_schedule_for_employee(employee, date, availability, operati
             schedule_doc.day_off_ot = day_off_ot
             schedule_doc.start_datetime = start_datetime
             schedule_doc.end_datetime = end_datetime
-            schedule_doc.modified_by = owner
-            schedule_doc.modified = creation
-            schedule_doc.reload()
             schedule_doc.save(ignore_permissions=True)
         else:
             # Create a new record
