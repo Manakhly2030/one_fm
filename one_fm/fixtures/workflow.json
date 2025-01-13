@@ -1483,7 +1483,7 @@
     "parent": "Purchase Order",
     "parentfield": "states",
     "parenttype": "Workflow",
-    "state": "Procurement Manager",
+    "state": "Pending Purchase Manager",
     "update_field": null,
     "update_value": null,
     "workflow_builder_id": null
