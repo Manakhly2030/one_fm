@@ -1349,7 +1349,7 @@ def validate_item(doc, method):
 
     if doc.subitem_group == "Service":
         doc.is_stock_item = 0
-        
+
     doc.description = final_description
     doc.change_request = False
     item_approval_workflow_notification(doc)
@@ -1505,8 +1505,6 @@ def validate_job_applicant(doc, method):
         set_required_documents(doc, method)
     if frappe.session.user != 'Guest' and not doc.one_fm_is_easy_apply:
         validate_mandatory_childs(doc)
-    if doc.one_fm_applicant_status in ["Shortlisted", "Selected"] and doc.status not in ["Rejected"]:
-        create_job_offer_from_job_applicant(doc.name)
     if doc.one_fm_number_of_kids and doc.one_fm_number_of_kids > 0:
         """This part is comparing the number of children with the listed children details in the table and ask user to add all childrens"""
         if doc.one_fm_number_of_kids != len(doc.one_fm_kids_details):
@@ -1693,6 +1691,10 @@ def set_job_applicant_status(doc, method):
                     else:
                         status = 'Verified - With Exception'
             doc.one_fm_document_verification = status
+
+def on_update_job_applicant(doc, method):
+    if doc.one_fm_applicant_status in ["Selected"] and doc.status not in ["Rejected"]:
+        create_job_offer_from_job_applicant(doc.name)
 
 def create_job_offer_from_job_applicant(job_applicant):
     if not frappe.db.exists('Job Offer', {'job_applicant': job_applicant, 'docstatus': ['<', 2]}):
@@ -2741,7 +2743,7 @@ def send_workflow_action_email(doc, recipients):
 def queue_send_workflow_action_email(doc, recipients):
     if recipients and (type(recipients)!=list):
         recipients = [recipients]
-    
+
     workflow = get_workflow_name(doc.get("doctype"))
     next_possible_transitions = get_next_possible_transitions(
         workflow, get_doc_workflow_state(doc), doc
@@ -3118,7 +3120,7 @@ def get_approver(employee, date=False):
 
             if not line_manager and employee_data.shift:
                 line_manager = get_shift_supervisor(employee_data.shift, date)
-            
+
             if not line_manager:
                 frappe.msgprint(
                     _("Please ensure that the Reports To or Operations Site Supervisor is set for {0}, Since the employee is not shift working".format(employee_data.employee_name)),
@@ -3668,5 +3670,3 @@ def background_enqueue_run(report_name, filters=None, user=None):
 		"name": track_instance.name,
 		"redirect_url": get_url_to_form("Prepared Report", track_instance.name)
 	}
-
-                    
