@@ -376,6 +376,11 @@ def proof_document_required_for_leave_type(leave_type):
 def leave_approver_action(leave_id: str,status: str) -> dict:
     try:
         doc = frappe.get_doc("Leave Application",{"name":leave_id})
+        has_leave_approver_role = "Leave Approver" in frappe.get_roles(frappe.session.user)
+
+        if not has_leave_approver_role:
+            return response("error", 403, {}, "You are not allowed to approve leave applications")
+        
         if doc:
             if not doc.leave_approver in [frappe.session.user, 'administrator']:
                 return response("error", 401, {}, "Unauthorised.")

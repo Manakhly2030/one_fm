@@ -117,7 +117,8 @@ doctype_js = {
     "Task": "public/js/doctype_js/task.js",
     "HD Ticket": "public/js/doctype_js/hd_ticket.js",
     "Appraisal": "public/js/doctype_js/appraisal.js",
-    "Employee Performance Feedback":"public/js/doctype_js/employee_performance_feedback.js"
+    "Employee Performance Feedback":"public/js/doctype_js/employee_performance_feedback.js",
+    "Contact": "public/js/doctype_js/contact.js"
 }
 doctype_list_js = {
 	"Job Applicant" : "public/js/doctype_js/job_applicant_list.js",
@@ -249,7 +250,7 @@ doc_events = {
 		"after_insert":[
       					"one_fm.overrides.hd_ticket.send_google_chat_notification",
                   		"one_fm.overrides.hd_ticket.notify_ticket_raiser_of_receipt"
-                    	], 
+                    	],
 		"on_change": "one_fm.overrides.hd_ticket.notify_issue_raiser_about_priority",
 		"on_update": "one_fm.overrides.hd_ticket.apply_ticket_escalation"
 	},
@@ -262,7 +263,11 @@ doc_events = {
 	"Job Applicant": {
 		"validate": "one_fm.utils.validate_job_applicant",
 		"onload": "one_fm.utils.validate_pam_file_number_and_pam_designation",
-		"on_update": "one_fm.one_fm.utils.send_notification_to_grd_or_recruiter"
+		"on_update": [
+			"one_fm.one_fm.utils.send_notification_to_grd_or_recruiter",
+			"one_fm.utils.on_update_job_applicant"
+		]
+
 	},
 	"Warehouse": {
 		"autoname": "one_fm.utils.warehouse_naming_series",
@@ -306,7 +311,8 @@ doc_events = {
 		]
 	},
 	"Contact": {
-		"on_update": "one_fm.accommodation.doctype.accommodation.accommodation.accommodation_contact_update"
+		"on_update": "one_fm.accommodation.doctype.accommodation.accommodation.accommodation_contact_update",
+        "validate": "one_fm.accommodation.doctype.accommodation.accommodation.validate_contact",
 	},
 	"Project": {
 		"validate": [
@@ -376,7 +382,7 @@ doc_events = {
 		"after_insert": [
 			"one_fm.utils.assign_issue",
 			"one_fm.api.doc_methods.issue.notify_issue_raiser"
-			
+
 		],
     "on_update": "one_fm.utils.notify_on_close",
 	},
@@ -509,7 +515,8 @@ override_doctype_class = {
     "Salary Slip": "one_fm.overrides.salary_slip.SalarySlipOverride",
     "Interview Feedback": "one_fm.overrides.interview_feedback.InterviewFeedbackOverride",
     "Leave Allocation": "one_fm.overrides.leave_allocation.LeaveAllocationOverride",
-    
+    "Interview": "one_fm.overrides.interview.InterviewOverride",
+
     # "User": "one_fm.overrides.user.UserOverride"
 }
 

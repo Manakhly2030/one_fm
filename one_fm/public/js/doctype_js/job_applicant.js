@@ -8,7 +8,76 @@ frappe.ui.form.on('Job Applicant', {
 				}
 			};
 		});
+		if (!frm.__is_realtime_listener_added) {
+			frappe.realtime.on('show_job_applicant_update_dialog', function(data) {
+				var job_application_name = data.job_application_name;
+				var job_applicant_status = data.job_applicant_status;
+				var job_applicant = data.job_applicant;
+
+				// Create the dialog with buttons
+				var dialog = new frappe.ui.Dialog({
+					title: __("Update Job Applicant"),
+					fields: [
+						{
+							fieldname: "info",
+							fieldtype: "HTML",
+							options: `<p>Update the Job Applicant <b>${job_application_name}</b> status based on this interview result.</p>`,
+						},
+					],
+					// Explicitly prevent any default action for buttons
+					no_submit_on_enter: true,
+				});
+
+				// Add primary button action
+				dialog.set_primary_action(`Mark as ${job_applicant_status}`, function() {
+					frappe.call({
+						method: "one_fm.overrides.interview.update_job_applicant_status",
+						args: {
+							args: {
+								job_applicant: job_applicant,
+								status: job_applicant_status
+							}
+						},
+						callback: function() {
+							frappe.show_alert({
+								message: (`Job Applicant marked as ${job_applicant_status}`),
+								indicator: "green"
+							});
+						},
+					});
+					dialog.hide();
+				});
+
+				// Add secondary button action for "Mark as Shortlisted"
+				dialog.set_secondary_action(function() {
+					frappe.call({
+						method: "one_fm.overrides.interview.update_job_applicant_status",
+						args: {
+							args: {
+								job_applicant: job_applicant,
+								status: "Shortlisted"
+							}
+						},
+						callback: function() {
+							frappe.show_alert({
+								message: ("Job Applicant marked as Shortlisted"),
+								indicator: "green"
+							});
+						},
+					});
+					dialog.hide();
+				});
+				dialog.set_secondary_action_label("Mark as Shortlisted");
+
+				// Show the dialog
+				dialog.show();
+			});
+
+			// Mark listener as added
+			frm.__is_realtime_listener_added = true;
+		}
 	},
+
 	refresh(frm) {
 		// Changes the buttons for `PAM File Number` and `PAM Desigantion` once operator wants to changethe data of any
 		// if(frm.doc.pam_number_button == 0 || frm.is_new()){
@@ -59,6 +128,22 @@ frappe.ui.form.on('Job Applicant', {
 				  },'Action');
 
 			if(frm.doc.one_fm_applicant_status != 'Selected' && frm.doc.status != 'Rejected'){
+				if(frm.doc.status != 'Accepted'){
+					frm.add_custom_button(__('Accept Applicant'), function() {
+						if(frm.doc.day_off_category && frm.doc.number_of_days_off && frm.doc.number_of_days_off > 0){
+							frappe.confirm('Are you sure you want to set Final Status as Accepted for this applicant?',
+							() => {
+								// action to perform if Yes is selected
+								change_applicant_status(frm, 'status', 'Accepted');
+							}, () => {
+								// action to perform if No is selected
+							})
+						}
+						else{
+							frappe.throw(__("Please Update Day off Details to Proceed !!"));
+						}
+					},"Action");
+				}
 				frm.add_custom_button(__('Select Applicant'), function() {
 					if(frm.doc.day_off_category && frm.doc.number_of_days_off && frm.doc.number_of_days_off > 0){
 						frappe.confirm('Are you sure you want to select this applicant?',
