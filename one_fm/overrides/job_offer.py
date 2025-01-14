@@ -126,11 +126,13 @@ class JobOfferOverride(JobOffer):
 
     def validate_job_offer_mandatory_fields(self):
         if self.workflow_state == 'Submit for Candidate Response':
+            applicant_details = frappe.db.get_value('Job Applicant', self.job_applicant, ['one_fm_hiring_method'], as_dict=1)
             mandatory_field_required = False
-            fields = ['Project', 'Base', 'Salary Structure'] if not self.attendance_by_timesheet else ['Base', 'Salary Structure']
+            fields = ['Base', 'Salary Structure']
             if not self.shift_working and not self.reports_to:
                 fields.append("Reports to")
-            if not self.attendance_by_timesheet:
+            if not self.attendance_by_timesheet and applicant_details.one_fm_hiring_method != 'Bulk Recruitment':
+                fields.append('Project')
                 fields.append('Operations Shift')
                 if self.shift_working:
                     fields.append('Operations Site')
