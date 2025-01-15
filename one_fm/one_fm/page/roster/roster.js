@@ -2766,15 +2766,30 @@ function staff_edit_dialog() {
 					}
 				}
 			},
-			{'label': 'Request Employee Assignment', 'fieldname': 'request_employee_assignment', 'fieldtype': 'Check'},
+			{'label': 'Is Reliever', 'fieldname': 'custom_is_reliever', 'fieldtype': 'Check', onchange: function () {
+				let is_reliever = d.get_value('custom_is_reliever');
+				d.set_df_property('custom_operations_role_allocation', 'reqd', !is_reliever);
+			}
+			},
+			{
+				'label': 'Default Operations Role', 'fieldname': 'custom_operations_role_allocation', 'fieldtype': 'Link', 'options': 'Operations Role', 'reqd': 1, get_query: function () {
+					let shift = d.get_value('shift');
+					if (shift) {
+						return {
+							"filters": { shift },
+							"page_len": 9999
+						};
+					}
+				}
+			}
 		],
 		primary_action: function () {
-			let { shift, request_employee_assignment } = d.get_values();
+			let { shift, custom_operations_role_allocation, custom_is_reliever } = d.get_values();
 
 			$('#cover-spin').show(0);
 			frappe.call({
 				method: 'one_fm.one_fm.page.roster.roster.assign_staff',
-				args: { employees, shift, request_employee_assignment},
+				args: { employees, shift, custom_operations_role_allocation, custom_is_reliever},
 				callback: function (r) {
 
 					d.hide();
@@ -2788,6 +2803,26 @@ function staff_edit_dialog() {
 			});
 		}
 	});
+
+	// Pre-populate if only one employee is selected
+	if (employees.length === 1) {
+		frappe.call({
+			method: 'one_fm.one_fm.page.roster.roster.get_employee_details',
+			args: { employee_id: employees[0] },
+			callback: function (r) {
+				if (r.message) {
+					let employee_details = r.message;
+					// Populate fields
+					d.set_value('project', employee_details.project);
+					d.set_value('site', employee_details.site);
+					d.set_value('shift', employee_details.shift);
+					d.set_value('custom_is_reliever', employee_details.custom_is_reliever);
+					d.set_value('custom_operations_role_allocation', employee_details.custom_operations_role_allocation);
+				}
+			}
+		});
+	}
+
 	d.show();
 }
 

@@ -1278,7 +1278,7 @@ def get_shift_details_of_employee(emp,date):
 
 
 @frappe.whitelist()
-def assign_staff(employees, shift, request_employee_assignment):
+def assign_staff(employees, shift, custom_is_reliever, custom_operations_role_allocation=None, request_employee_assignment=None):
     if not employees:
         frappe.throw("Please select employees first")
     validation_logs = []
@@ -1501,3 +1501,15 @@ def determine_availability(current_date, start_date, total_days, day_off_categor
         return "Working" if day_index < total_days - num_days_off else "Day Off OT"
 
     return "Working"  # Default to working if no category matches
+
+
+@frappe.whitelist()
+def get_employee_details(employee_id):
+    employee = frappe.get_doc("Employee", employee_id)
+    return {
+        "project": employee.project,
+        "site": employee.site,
+        "shift": employee.shift,
+        "custom_is_reliever": employee.custom_is_reliever,
+        "custom_operations_role_allocation": employee.custom_operations_role_allocation
+    }
