@@ -1742,25 +1742,18 @@ def set_salary_details(job_offer, erf):
     job_offer.one_fm_job_offer_total_salary = total_amount
 
 def set_other_benefits_to_terms(job_offer, erf, job_app):
-    # if erf.other_benefits:
-    #     for benefit in erf.other_benefits:
-    #         terms = job_offer.append('offer_terms')
-    #         terms.offer_term = benefit.benefit
-    #         terms.value = 'Company Provided'
-    options = [{'provide_mobile_with_line':'Mobile with Line'}, {'provide_health_insurance':'Health Insurance'},
-        {'provide_company_insurance': 'Company Insurance'}, {'provide_laptop_by_company': 'Personal Laptop'},
-        {'provide_vehicle_by_company': 'Personal Vehicle'}]
+    options = {
+        'provide_mobile_with_line':'Mobile with Line', 'provide_health_insurance':'Health Insurance',
+        'provide_company_insurance': 'Company Insurance', 'provide_laptop_by_company': 'Personal Laptop',
+        'provide_vehicle_by_company': 'Personal Vehicle', 'provide_accommodation_by_company': 'Accommodation',
+        'provide_transportation_by_company': 'Transportation'
+    }
+
     for option in options:
         if erf.get(option):
             terms = job_offer.append('offer_terms')
             terms.offer_term = options[option]
             terms.value = 'Company Provided'
-
-    terms_list = ['Kuwait Visa processing Fees', 'Kuwait Residency Fees', 'Kuwait insurance Fees']
-    for term in terms_list:
-        terms = job_offer.append('offer_terms')
-        terms.offer_term = term
-        terms.value = 'Borne By The Company'
 
     hours = erf.shift_hours if erf.shift_hours else 9
     vacation_days = erf.vacation_days if erf.vacation_days else 30
