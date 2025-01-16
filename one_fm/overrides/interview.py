@@ -49,7 +49,7 @@ def update_interview_rounds_in_job_applicant(doc, method):
 
 
 class InterviewOverride(Interview):
-    
+
     def show_job_applicant_update_dialog(self):
         job_applicant_status = self.get_job_applicant_status()
         if not job_applicant_status:
@@ -57,11 +57,15 @@ class InterviewOverride(Interview):
         job_application_name = frappe.db.get_value("Job Applicant", self.job_applicant, "applicant_name")
 
         if job_applicant_status == "Accepted":
-            frappe.publish_realtime('show_job_applicant_update_dialog', {
-            'job_application_name': job_application_name,
-            'job_applicant_status': job_applicant_status,
-            'job_applicant': self.job_applicant
-            })
+            frappe.publish_realtime(
+                event = 'show_job_applicant_update_dialog',
+                message = {
+                    'job_application_name': job_application_name,
+                    'job_applicant_status': job_applicant_status,
+                    'job_applicant': self.job_applicant
+                },
+                user = frappe.session.user
+            )
         elif job_applicant_status == "Rejected":
             frappe.msgprint(
             _("Do you want to update the Job Applicant {0} as {1} based on this interview result?").format(
@@ -91,7 +95,7 @@ def update_job_applicant_status(args):
         job_applicant.save()
 
         if job_applicant.status == "Accepted":
-            send_applicant_doc_magic_link(job_applicant.name, job_applicant.applicant_name, job_applicant.one_fm_designation)        
+            send_applicant_doc_magic_link(job_applicant.name, job_applicant.applicant_name, job_applicant.one_fm_designation)
         frappe.msgprint(
 			_("Updated the Job Applicant status to {0}").format(job_applicant.status),
 			alert=True,
