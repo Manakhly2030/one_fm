@@ -21,12 +21,8 @@ frappe.query_reports["Absentees Per Supervisor"] = {
 			"fieldname":"roster_type",
 			"label": __("Roster Type"),
 			"fieldtype": "Select",
-			"reqd": 1,
-			"options": [
-				{ "value": 'Basic', "label": __("Basic") },
-				{ "value": 'Over-Time', "label": __("Over-Time") }
-			],
-			"default": "Basic"
+			"options": "\nBasic\nOver-Time",
+			"reqd": 0
 		},
 	]
 };
