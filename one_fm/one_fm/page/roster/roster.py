@@ -1299,7 +1299,7 @@ def assign_staff(employees, shift, custom_is_reliever, custom_operations_role_al
 
             for employee in json.loads(employees):
                 if not cint(request_employee_assignment):
-                    frappe.enqueue(assign_job, employee=employee, shift=shift, site=site, project=project, is_async=True, queue="long")
+                    frappe.enqueue(assign_job, employee=employee, shift=shift, site=site, project=project, custom_operations_role_allocation=custom_operations_role_allocation, custom_is_reliever=custom_is_reliever, is_async=True, queue="long")
                 else:
                     emp_project, emp_site, emp_shift = frappe.db.get_value("Employee", employee, ["project", "site", "shift"])
                     site, project = frappe.get_value("Operations Shift", shift, ["site", "project"])
@@ -1322,12 +1322,13 @@ def create_request_employee_assignment(employee, from_shift, to_shift):
     req_ea_doc.save(ignore_permissions=True)
 
 
-def assign_job(employee, shift, site, project):
+def assign_job(employee, shift, site, project, custom_operations_role_allocation, custom_is_reliever):
 
     frappe.set_value("Employee", employee, "shift", shift)
     frappe.set_value("Employee", employee, "site", site)
     frappe.set_value("Employee", employee, "project", project)
-
+    frappe.set_value("Employee", employee, "custom_operations_role_allocation", custom_operations_role_allocation)
+    frappe.set_value("Employee", employee, "custom_is_reliever", custom_is_reliever)
 
 @frappe.whitelist(allow_guest=True)
 def search_staff(key, search_term):
