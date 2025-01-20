@@ -622,7 +622,8 @@ scheduler_events = {
 		"10 4 * * *": [ #“At 04:10.”
 			'one_fm.utils.check_grp_operator_submission_four',
 			'one_fm.operations.doctype.post_scheduler_checker.post_scheduler_checker.schedule_roster_checker',
-			'one_fm.operations.doctype.roster_day_off_checker.roster_day_off_checker.generate_checker'
+			'one_fm.operations.doctype.roster_day_off_checker.roster_day_off_checker.generate_checker',
+            'one_fm.operations.doctype.default_shift_checker.default_shift_checker.create_default_shift_checker'
 		],
 		"30 4 * * *": [
 			'one_fm.utils.check_grp_operator_submission_four_half'
@@ -727,7 +728,10 @@ scheduler_events = {
 		"0 * * * *":[ # Creates the missing checkin record per shift, runs every hour
 			"one_fm.one_fm.doctype.missing_checkin.missing_checkin.create_missing_checkin_record",
 			"one_fm.api.tasks.notify_approver_about_pending_shift_request"
-		]
+		],
+        "0 0 15 * *": [
+            "one_fm.one_fm.page.roster.roster.create_employee_schedule"
+        ]
 	}
 }
 

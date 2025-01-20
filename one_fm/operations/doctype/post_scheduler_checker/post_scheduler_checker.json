@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "contract",
+  "status",
   "project",
   "site_supervisor",
   "site_supervisor_name",
@@ -16,6 +17,7 @@
   "client",
   "supervisor",
   "supervisor_name",
+  "site_supervisor_user",
   "section_break_8",
   "items"
  ],
@@ -99,11 +101,27 @@
    "in_standard_filter": 1,
    "label": "Site Supervisor Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nCompleted\nOverdue\nCancelled"
+  },
+  {
+   "fetch_from": "site_supervisor.user_id",
+   "fetch_if_empty": 1,
+   "fieldname": "site_supervisor_user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Site Supervisor User",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-04 14:00:59.199466",
+ "modified": "2024-12-30 23:36:05.824419",
  "modified_by": "Administrator",
  "module": "Operations",
  "name": "Post Scheduler Checker",

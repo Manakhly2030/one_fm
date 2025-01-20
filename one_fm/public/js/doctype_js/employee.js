@@ -24,7 +24,15 @@ frappe.ui.form.on('Employee', {
 					freaze_message: __("Running Employee ID Generation Method..")
 				});
 			});
-		}
+		};
+	
+		frm.set_query('custom_operations_role_allocation', function() {
+            return {
+                filters: {
+                    shift: frm.doc.shift || ""
+                }
+            };
+        });
 	},
 	status: function(frm){
 		set_mandatory(frm);
@@ -68,7 +76,14 @@ frappe.ui.form.on('Employee', {
 		if(frm.doc.employee_id){
 			update_employee_id_based_on_residency(frm);
 		}
-	}
+	},
+	shift: function(frm) {
+		if (!frm.doc.shift) {
+            frm.set_value('custom_operations_role_allocation', null);
+        }
+        frm.refresh_field('custom_operations_role_allocation');
+
+    }
 });
 
 

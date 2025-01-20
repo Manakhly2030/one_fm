@@ -1,4 +1,260 @@
 [
+    {
+        "assign_condition": "status in (\"Pending\", \"Overdue\")",
+        "assignment_days": [
+            {
+                "day": "Sunday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Monday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Tuesday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Wednesday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Thursday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Friday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Saturday",
+                "parent": "Roster Post Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            }
+        ],
+        "close_condition": "status == \"Completed\"",
+        "custom_routine_task": null,
+        "description": "<p>Here is to inform you that the following {{ doctype }}({{ name }}) requires your attention/action.\n        <br>\n        The details of the request are as follows:\n        <br>\n        </p><table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" style=\"border-collapse: collapse;\">\n            <thead>\n                <tr>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Label</th>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Value</th>\n                </tr>\n            </thead>\n        <tbody>\n        \n            <tr>\n                <td style=\"padding: 10px;\">Start Date</td>\n                <td style=\"padding: 10px;\">{{start_date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">End Date</td>\n                <td style=\"padding: 10px;\">{{end_date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Shift Supervisor</td>\n                <td style=\"padding: 10px;\">{{supervisor}}</td>\n            </tr>\n            </tbody></table><p></p>",
+        "disabled": 0,
+        "docstatus": 0,
+        "doctype": "Assignment Rule",
+        "document_type": "Roster Post Actions",
+        "due_date_based_on": null,
+        "field": "site_supervisor_user",
+        "is_assignment_rule_with_workflow": 0,
+        "last_user": null,
+        "modified": "2024-12-25 10:44:00.736225",
+        "name": "Roster Post Actions - Site Supervisor",
+        "priority": 0,
+        "rule": "Based on Field",
+        "unassign_condition": "status == \"Cancelled\"",
+        "users": []
+    },
+    {
+        "assign_condition": "status in (\"Pending\", \"Overdue\")",
+        "assignment_days": [
+            {
+                "day": "Sunday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Monday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Tuesday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Wednesday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Thursday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Friday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Saturday",
+                "parent": "Roster Employee Actions - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            }
+        ],
+        "close_condition": "status == \"Completed\"",
+        "custom_routine_task": null,
+        "description": "<p>Here is to inform you that the following {{ doctype }}({{ name }}) requires your attention/action.\n        <br>\n        The details of the request are as follows:\n        <br>\n        </p><table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" style=\"border-collapse: collapse;\">\n            <thead>\n                <tr>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Label</th>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Value</th>\n                </tr>\n            </thead>\n        <tbody>\n        \n            <tr>\n                <td style=\"padding: 10px;\">Start Date</td>\n                <td style=\"padding: 10px;\">{{start_date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">End Date</td>\n                <td style=\"padding: 10px;\">{{end_date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Shift  Supervisor</td>\n                <td style=\"padding: 10px;\">{{supervisor}}</td>\n            </tr>\n            </tbody></table><p></p>",
+        "disabled": 0,
+        "docstatus": 0,
+        "doctype": "Assignment Rule",
+        "document_type": "Roster Employee Actions",
+        "due_date_based_on": null,
+        "field": "site_supervisor_user",
+        "is_assignment_rule_with_workflow": 0,
+        "last_user": null,
+        "modified": "2024-12-25 10:57:58.178979",
+        "name": "Roster Employee Actions - Site Supervisor",
+        "priority": 0,
+        "rule": "Based on Field",
+        "unassign_condition": "status == \"Cancelled\"",
+        "users": []
+    },
+    {
+        "assign_condition": "status in (\"Pending\", \"Overdue\")",
+        "assignment_days": [
+            {
+                "day": "Sunday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Monday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Tuesday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Wednesday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Thursday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Friday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Saturday",
+                "parent": "Post Schedule Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            }
+        ],
+        "close_condition": "status ==  \"Completed\"",
+        "custom_routine_task": null,
+        "description": "<p>Here is to inform you that the following {{ doctype }}({{ name }}) requires your attention/action.\n        <br>\n        The details of the request are as follows:\n        <br>\n        </p><table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" style=\"border-collapse: collapse;\">\n            <thead>\n                <tr>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Label</th>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Value</th>\n                </tr>\n            </thead>\n        <tbody>\n        \n            <tr>\n                <td style=\"padding: 10px;\">Contract</td>\n                <td style=\"padding: 10px;\">{{contract}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Project</td>\n                <td style=\"padding: 10px;\">{{project}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Site Supervisor</td>\n                <td style=\"padding: 10px;\">{{site_supervisor}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Shift Supervisor</td>\n                <td style=\"padding: 10px;\">{{supervisor}}</td>\n            </tr>\n            </tbody></table><p></p>",
+        "disabled": 0,
+        "docstatus": 0,
+        "doctype": "Assignment Rule",
+        "document_type": "Post Scheduler Checker",
+        "due_date_based_on": null,
+        "field": "site_supervisor_user",
+        "is_assignment_rule_with_workflow": 0,
+        "last_user": null,
+        "modified": "2024-12-30 23:43:16.100532",
+        "name": "Post Schedule Checker - Site Supervisor",
+        "priority": 0,
+        "rule": "Based on Field",
+        "unassign_condition": "status ==  \"Cancelled\"",
+        "users": []
+    },
+    {
+        "assign_condition": "status in (\"Pending\", \"Overdue\")",
+        "assignment_days": [
+            {
+                "day": "Sunday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Monday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Tuesday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Wednesday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Thursday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Friday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            },
+            {
+                "day": "Saturday",
+                "parent": "Roster Day Off Checker - Site Supervisor",
+                "parentfield": "assignment_days",
+                "parenttype": "Assignment Rule"
+            }
+        ],
+        "close_condition": "status == \"Completed\"",
+        "custom_routine_task": null,
+        "description": "<p>Here is to inform you that the following {{ doctype }}({{ name }}) requires your attention/action.\n        <br>\n        The details of the request are as follows:\n        <br>\n        </p><table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" style=\"border-collapse: collapse;\">\n            <thead>\n                <tr>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Label</th>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Value</th>\n                </tr>\n            </thead>\n        <tbody>\n        \n            <tr>\n                <td style=\"padding: 10px;\">Date</td>\n                <td style=\"padding: 10px;\">{{date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Shift Supervisor</td>\n                <td style=\"padding: 10px;\">{{supervisor}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Site Supervisor</td>\n                <td style=\"padding: 10px;\">{{site_supervisor}}</td>\n            </tr>\n            </tbody></table><p></p>",
+        "disabled": 0,
+        "docstatus": 0,
+        "doctype": "Assignment Rule",
+        "document_type": "Roster Day Off Checker",
+        "due_date_based_on": null,
+        "field": "site_supervisor_user",
+        "is_assignment_rule_with_workflow": 0,
+        "last_user": null,
+        "modified": "2024-12-31 00:12:34.270154",
+        "name": "Roster Day Off Checker - Site Supervisor",
+        "priority": 0,
+        "rule": "Based on Field",
+        "unassign_condition": "status == \"Cancelled\"",
+        "users": []
+    },
  {
   "assign_condition": "workflow_state in ('Approved', \"Rejected\")",
   "assignment_days": [
@@ -183,7 +439,7 @@
   "due_date_based_on": null,
   "field": "site_supervisor_user",
   "is_assignment_rule_with_workflow": 0,
-  "last_user": "",
+"last_user": "",
   "modified": "2024-01-24 18:00:38.952572",
   "name": "Attendance Check Site Supervisor",
   "priority": 1,
@@ -524,5 +780,66 @@
     "user": "saoud@one-fm.com"
    }
   ]
+ },
+ {
+    "name": "Default Shift Checker -Site Supervisor",
+    "modified": "2024-12-24 09:48:29.021713",
+    "docstatus": 0,
+    "document_type": "Default Shift Checker",
+    "priority": 0,
+    "disabled": 0,
+    "description": "<p>Here is to inform you that the following {{ doctype }}({{ name }}) requires your attention/action.\n        <br>\n        The details of the request are as follows:\n        <br>\n        </p><table cellpadding=\"0\" cellspacing=\"0\" border=\"1\" style=\"border-collapse: collapse;\">\n            <thead>\n                <tr>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Label</th>\n                    <th style=\"padding: 10px; text-align: left; background-color: #f2f2f2;\">Value</th>\n                </tr>\n            </thead>\n        <tbody>\n        \n            <tr>\n                <td style=\"padding: 10px;\">Start Date</td>\n                <td style=\"padding: 10px;\">{{start_date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">End Date</td>\n                <td style=\"padding: 10px;\">{{end_date}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Shift Supervisor</td>\n                <td style=\"padding: 10px;\">{{shift_supervisor}}</td>\n            </tr>\n            \n            <tr>\n                <td style=\"padding: 10px;\">Site Supervisor</td>\n                <td style=\"padding: 10px;\">{{site_supervisor}}</td>\n            </tr>\n            </tbody>\n            </table>\n<p></p>",
+    "is_assignment_rule_with_workflow": 0,
+    "assign_condition": "status in (\"Pending\", \"Overdue\")",
+    "unassign_condition": "status == \"Cancelled\"",
+    "close_condition": "status == \"Completed\"",
+    "rule": "Based on Field",
+    "field": "site_supervisor_user",
+    "doctype": "Assignment Rule",
+    "assignment_days": [
+      {
+        "day": "Monday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      },
+      {
+        "day": "Tuesday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      },
+      {
+        "day": "Wednesday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      },
+      {
+        "day": "Thursday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      },
+      {
+        "day": "Friday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      },
+      {
+        "day": "Saturday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      },
+      {
+        "day": "Sunday",
+        "parent": "Default Shift Checker -Site Supervisor",
+        "parentfield": "assignment_days",
+        "parenttype": "Assignment Rule"
+      }
+    ],
+  "users": []
  }
 ]

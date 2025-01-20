@@ -46,6 +46,10 @@ class PostSchedulerChecker(Document):
 			if site_supevisor_list:
 				site = site_supevisor_list[0]
 				self.site_supervisor, self.site_supervisor_name = site["account_supervisor"], site["account_supervisor_name"]
+
+			if self.site_supervisor:
+				self.site_supervisor_user = frappe.db.get_value("Employee", self.site_supervisor, "user_id")
+
 		except Exception as e:
 			frappe.log_error(frappe.get_traceback(), str(e))
 

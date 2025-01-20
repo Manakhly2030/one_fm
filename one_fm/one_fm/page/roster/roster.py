@@ -1,7 +1,7 @@
 from pandas.core.indexes.datetimes import date_range
 from datetime import datetime
 from one_fm.one_fm.page.roster.employee_map  import CreateMap,PostMap
-from frappe.utils import nowdate, add_to_date, cstr, cint, getdate, now, get_datetime, today, add_days
+from frappe.utils import nowdate, add_to_date, cstr, cint, getdate, now, get_datetime, today, add_days, add_months, get_first_day, get_last_day, date_diff
 import pandas as pd, numpy as np
 from frappe import _
 import json, multiprocessing, os, time, itertools, frappe
@@ -10,7 +10,7 @@ from itertools import product
 from one_fm.api.notification import create_notification_log
 from one_fm.api.v1.utils import response
 from one_fm.utils import query_db_list
-
+from distutils.util import strtobool
 
 
 @frappe.whitelist(allow_guest=True)
@@ -85,7 +85,7 @@ def get_staff_filters_data():
 
 
 @frappe.whitelist()
-def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_search_id=None, employee_search_name=None, project=None, site=None, shift=None, department=None, operations_role=None, designation=None, isOt=None, limit_start=0, limit_page_length=9999):
+def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_search_id=None, employee_search_name=None, project=None, site=None, shift=None, department=None, operations_role=None, designation=None, relievers=False, isOt=None, limit_start=0, limit_page_length=9999):
     try:
         master_data, formatted_employee_data, post_count_data, employee_filters= {}, {}, {}, {}
         operations_roles_list = []
@@ -107,7 +107,10 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
             employee_filters.update({'employee_name': ("like", "%" + employee_search_name + "%")})
             exited_employee_filters += f""" and employee_name LIKE "%{employee_search_name}%" """
             asa_filters+=f'and asa.employee_name LIKE "%{employee_search_name}%"'
-
+        if relievers:
+            employee_filters.update({'custom_is_reliever': strtobool(relievers)})
+            exited_employee_filters += f""" and custom_is_reliever={strtobool(relievers)} """
+            asa_filters+=f' and em.custom_is_reliever={strtobool(relievers)}'
         if project:
             employee_filters.update({'project': project})
             exited_employee_filters += f""" and project =  "{project}" """
@@ -134,7 +137,8 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
 
         if isOt:
             employee_filters.update({'employee_availability' : 'Working'})
-            all_active_employees = frappe.db.sql("SELECT name from `tabEmployee` where status in ('Active','Vacation') and attendance_by_timesheet = '0' and shift_working= '1'",as_dict =1)
+            reliever_filter = f"and custom_is_reliever={strtobool(relievers)}" if relievers else ""
+            all_active_employees = frappe.db.sql(f"SELECT name from `tabEmployee` where status in ('Active','Vacation') and attendance_by_timesheet = '0' and shift_working= '1' {reliever_filter}",as_dict =1)
             all_active_employee_ids = [i.name for i in all_active_employees]
             employee_filters.update({'employee':['In',all_active_employee_ids]})
             employees = frappe.db.get_list("Employee Schedule", employee_filters, ["distinct employee", "employee_name"], order_by="employee_name asc" ,limit_start=limit_start, limit_page_length=limit_page_length, ignore_permissions=True)
@@ -163,6 +167,7 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
                 if len(employees_asa) > 0:
                     employees.extend(employees_asa)
                     employees = filter_redundant_employees(employees)
+
             master_data.update({'total': len(employees)})
             employee_filters.pop('status', None)
             employee_filters.pop('shift_working', None)
@@ -179,6 +184,9 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
             employee_filters.update({'operations_role': operations_role})
         if designation:
             employee_filters.pop('designation', None)
+        reliever = frappe.db.get_list('Employee', fields=['*'], filters={'custom_is_reliever': 1})
+        if relievers:
+            employee_filters.pop('custom_is_reliever', None)
 
         #------------------- Fetch Operations Roles ------------------------#
         operations_roles_list = frappe.db.get_list("Post Schedule", employee_filters, ["distinct operations_role", "post_abbrv"], ignore_permissions=True)
@@ -195,7 +203,7 @@ def get_roster_view(start_date, end_date, assigned=0, scheduled=0, employee_sear
 
         #----------------- Get Operations Role count and check fill status -------------------#
         post_map = PostMap(start=start_date,end=end_date,operations_roles_list=operations_roles_list,filters=employee_filters)
-        master_data.update({'operations_roles_data': post_map.template})
+        master_data.update({'operations_roles_data': post_map.template,'reliever':reliever})
         response("Success", 200, master_data)
     except Exception as e:
         # print(frappe.get_traceback())
@@ -392,7 +400,7 @@ def update_roster(key):
 
 
 def extreme_schedule(employees, shift, operations_role, otRoster, start_date, end_date, keep_days_off, day_off_ot,
-    request_employee_schedule, employee_list):
+    request_employee_schedule, employee_list,selected_reliever=None):
     if not employees:
         frappe.throw("Please select employees before rostering")
         return
@@ -1059,7 +1067,7 @@ def set_post_off(post, date, post_off_paid):
 
 
 @frappe.whitelist()
-def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[], repeat_till=None, project_end_date=None):
+def dayoff(employees, selected_dates=0,selected_reliever=None, repeat=0, repeat_freq=None, week_days=[], repeat_till=None, project_end_date=None):
     """
         Set days of done with sql query for instant response
     """
@@ -1067,6 +1075,7 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
         creation = now()
         owner = frappe.session.user
         roster_type = "Basic"
+        
         id_list = []
         query = """
             INSERT INTO `tabEmployee Schedule` (`name`, `employee`, `date`, `shift`, `site`, `project`, `shift_type`, `employee_availability`,
@@ -1074,7 +1083,7 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
             VALUES
         """
         querycontent = """"""
-
+        roster_list=[]
 
         if not repeat_till and not cint(project_end_date) and not selected_dates:
             frappe.throw(_("Please select either a repeat till date or check the project end date option."))
@@ -1083,6 +1092,18 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
         if cint(selected_dates):
             for employee in json.loads(employees):
                 date = employee['date']
+                start_date = getdate(date)
+                month_end_date = get_last_day(start_date)
+                emp_query = f"""
+                       SELECT *
+                       FROM `tabEmployee Schedule`
+                       WHERE `employee` = '{employee['employee']}' AND `date` = '{employee['date']}'
+                   """   
+                try:
+                    roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                except:
+                    roster_data = get_shift_details_of_employee(employee['employee'],date)
+                roster_list.append(roster_data)
                 if getdate(date)>getdate(today()):
                     name = f"{date}_{employee['employee']}_{roster_type}"
                     id_list.append(name)
@@ -1091,13 +1112,20 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
                         '', "Day Off", "", "", "Basic",
                         0, "{owner}", "{owner}", "{creation}", "{creation}"
                     ),"""
+                    update_day_off_ot = frappe.db.get_value("Employee Schedule", 
+                    {
+                        "employee": employee["employee"],
+                        "day_off_ot": 1,
+                        "date": ["between", [start_date, month_end_date]],
+                    },)
+                    if update_day_off_ot:
+                        frappe.db.set_value("Employee Schedule", update_day_off_ot, "day_off_ot", 0)
         else:
-            if repeat and repeat_freq in ["Daily", "Weekly", "Monthly", "Yearly"]:
+            if repeat and repeat_freq in ["Weekly", "Monthly"]:
                 end_date = None
                 if repeat_till and not cint(project_end_date):
                     end_date = repeat_till
-
-                if repeat_freq == "Daily":
+                if repeat_freq == "Weekly":
                     for employee in json.loads(employees):
                         if cint(project_end_date):
                             project = frappe.db.get_value("Employee", {'employee': employee["employee"]}, ["project"])
@@ -1108,26 +1136,7 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
                             else:
                                 frappe.throw(_("No contract linked with project {project}".format(project=project)))
                         for date in	pd.date_range(start=employee["date"], end=end_date):
-                            if getdate(date)>getdate(today()):
-                                name = f"{date.date()}_{employee['employee']}_{roster_type}"
-                                id_list.append(name)
-                                querycontent += f"""(
-                                    "{name}", "{employee["employee"]}", "{date.date()}", "", "", "",
-                                    '', "Day Off", "", "", "Basic",
-                                    0, "{owner}", "{owner}", "{creation}", "{creation}"
-                                ),"""
-
-                elif repeat_freq == "Weekly":
-                    for employee in json.loads(employees):
-                        if cint(project_end_date):
-                            project = frappe.db.get_value("Employee", {'employee': employee["employee"]}, ["project"])
-                            if frappe.db.exists("Contracts", {'project': project}):
-                                contract, end_date = frappe.db.get_value("Contracts", {'project': project}, ["name", "end_date"])
-                                if not end_date:
-                                    frappe.throw(_("No end date set for contract {contract}".format(contract=contract)))
-                            else:
-                                frappe.throw(_("No contract linked with project {project}".format(project=project)))
-                        for date in	pd.date_range(start=employee["date"], end=end_date):
+                            month_end_date = get_last_day(getdate(date))
                             if getdate(date).strftime('%A') in week_days and getdate(date)>getdate(today()):
                                 name = f"{date.date()}_{employee['employee']}_{roster_type}"
                                 id_list.append(name)
@@ -1136,6 +1145,25 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
                                     '', "Day Off", "", "", "Basic",
                                     0, "{owner}", "{owner}", "{creation}", "{creation}"
                                 ),"""
+                                emp_query = f"""
+                                    SELECT *
+                                    FROM `tabEmployee Schedule`
+                                    WHERE `name` = '{name}'
+                                """  
+                                try:
+                                    roster_data = frappe.db.sql(emp_query, as_dict=True)[0]
+                                except:    
+                                    roster_data = get_shift_details_of_employee(employee['employee'],date.date())
+                                if roster_data not in roster_list:
+                                    roster_list.append(roster_data)
+                                update_day_off_ot = frappe.db.get_value("Employee Schedule", 
+                                {
+                                    "employee": employee["employee"],
+                                    "day_off_ot": 1,
+                                    "date": ["between", [date.date(), month_end_date]],
+                                },)
+                                if update_day_off_ot:
+                                    frappe.db.set_value("Employee Schedule", update_day_off_ot, "day_off_ot", 0)
 
                 elif repeat_freq == "Monthly":
                     for employee in json.loads(employees):
@@ -1148,6 +1176,7 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
                             else:
                                 frappe.throw(_("No contract linked with project {project}".format(project=project)))
                         for date in	month_range(employee["date"], end_date):
+                            month_end_date = get_last_day(getdate(date))
                             if getdate(date)>getdate(today()):
                                 name = f"{date.date()}_{employee['employee']}_{roster_type}"
                                 id_list.append(name)
@@ -1156,26 +1185,26 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
                                     '', "Day Off", "", "", "Basic",
                                     0, "{owner}", "{owner}", "{creation}", "{creation}"
                                 ),"""
-
-                elif repeat_freq == "Yearly":
-                    for employee in json.loads(employees):
-                        if cint(project_end_date):
-                            project = frappe.db.get_value("Employee", {'employee': employee["employee"]}, ["project"])
-                            if frappe.db.exists("Contracts", {'project': project}):
-                                contract, end_date = frappe.db.get_value("Contracts", {'project': project}, ["name", "end_date"])
-                                if not end_date:
-                                    frappe.throw(_("No end date set for contract {contract}".format(contract=contract)))
-                            else:
-                                frappe.throw(_("No contract linked with project {project}".format(project=project)))
-                        for date in	pd.date_range(start=employee["date"], end=end_date, freq=pd.DateOffset(years=1)):
-                            if getdate(date)>getdate(today()):
-                                name = f"{date.date()}_{employee['employee']}_{roster_type}"
-                                id_list.append(name)
-                                querycontent += f"""(
-                                    "{name}", "{employee["employee"]}", "{date.date()}", "", "", "",
-                                    '', "Day Off", "", "", "Basic",
-                                    0, "{owner}", "{owner}", "{creation}", "{creation}"
-                                ),"""
+                                emp_query = f"""
+                                    SELECT *
+                                    FROM `tabEmployee Schedule`
+                                    WHERE `name` = '{name}'
+                                """   
+                                try:
+                                    roster_data = frappe.db.sql(emp_query, as_dict=True)[0]  
+                                except:
+                                    roster_data = get_shift_details_of_employee(employee['employee'],date.date())
+                                if roster_data not in roster_list:
+                                    roster_list.append(roster_data)
+                                    
+                                update_day_off_ot = frappe.db.get_value("Employee Schedule", 
+                                {
+                                    "employee": employee["employee"],
+                                    "day_off_ot": 1,
+                                    "date": ["between", [date.date(), month_end_date]],
+                                },)
+                                if update_day_off_ot:
+                                    frappe.db.set_value("Employee Schedule", update_day_off_ot, "day_off_ot", 0)
 
         if querycontent:
             querycontent = querycontent[:-1]
@@ -1197,13 +1226,59 @@ def dayoff(employees, selected_dates=0, repeat=0, repeat_freq=None, week_days=[]
             """
             frappe.db.sql(query, values=[], as_dict=1)
             frappe.db.commit()
+        if selected_reliever:
+            reliever_id = selected_reliever.split('-')[0]
+            rel_emp_query = f"""
+            SELECT *
+            FROM `tabEmployee`
+            WHERE `employee_id` = '{reliever_id}'
+            """
+            rel_emp_query_results = (frappe.db.sql(rel_emp_query, as_dict=True)[0]).name
+            releiver_roster_assignment(rel_emp_query_results,roster_list)
         response("success", 200, {'message':'Days Off set successfully.'})
     except Exception as e:
         response("error", 200, None, str(e))
 
+def releiver_roster_assignment(reliver_emp,roster_list):
+    day_off_ot = 0
+    selected_reliever = reliver_emp
+    request_employee_schedule = 0
+    keep_days_off = 0
+    employee_list = [reliver_emp]
+    otRoster = 'false'
+    for roster_data in roster_list:
+        if roster_data['shift']:
+            shift = roster_data['shift']
+            operations_role = roster_data['operations_role']
+            start_date = roster_data['start_datetime'].date()
+            end_date = roster_data['end_datetime'].date()
+            date = roster_data['date'].strftime("%Y-%m-%d")
+            employees = [{"employee":reliver_emp,"date":date}]
+            extreme_schedule(employees, shift, operations_role, otRoster, start_date, end_date, keep_days_off, day_off_ot,
+            request_employee_schedule, employee_list,selected_reliever)
+
+def get_shift_details_of_employee(emp,date):
+    emp_project, emp_site, emp_shift,designation = frappe.db.get_value("Employee", emp, ["project", "site", "shift","Designation"])
+    operations_shift = frappe.get_doc("Operations Shift",emp_shift, ignore_permissions=True)
+    start_datetime = datetime.strptime(f"{date} {operations_shift.start_time}", '%Y-%m-%d %H:%M:%S')
+    end_datetime = datetime.strptime(f"{date} {operations_shift.end_time}", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime(f"{date}", '%Y-%m-%d')
+    operation_role = frappe.get_value(
+    "Operations Role",
+    filters={
+        "shift": emp_shift,
+        "project": emp_project,
+        "post_name": designation
+    },
+    fieldname="name"
+)
+    dict_value = {'date':date,'shift':emp_shift,'operations_role':operation_role,'start_datetime':start_datetime,'end_datetime':end_datetime}
+    return dict_value
+
+
 
 @frappe.whitelist()
-def assign_staff(employees, shift, request_employee_assignment):
+def assign_staff(employees, shift, custom_is_reliever, custom_operations_role_allocation=None, request_employee_assignment=None):
     if not employees:
         frappe.throw("Please select employees first")
     validation_logs = []
@@ -1224,7 +1299,7 @@ def assign_staff(employees, shift, request_employee_assignment):
 
             for employee in json.loads(employees):
                 if not cint(request_employee_assignment):
-                    frappe.enqueue(assign_job, employee=employee, shift=shift, site=site, project=project, is_async=True, queue="long")
+                    frappe.enqueue(assign_job, employee=employee, shift=shift, site=site, project=project, custom_operations_role_allocation=custom_operations_role_allocation, custom_is_reliever=custom_is_reliever, is_async=True, queue="long")
                 else:
                     emp_project, emp_site, emp_shift = frappe.db.get_value("Employee", employee, ["project", "site", "shift"])
                     site, project = frappe.get_value("Operations Shift", shift, ["site", "project"])
@@ -1247,12 +1322,13 @@ def create_request_employee_assignment(employee, from_shift, to_shift):
     req_ea_doc.save(ignore_permissions=True)
 
 
-def assign_job(employee, shift, site, project):
+def assign_job(employee, shift, site, project, custom_operations_role_allocation, custom_is_reliever):
 
     frappe.set_value("Employee", employee, "shift", shift)
     frappe.set_value("Employee", employee, "site", site)
     frappe.set_value("Employee", employee, "project", project)
-
+    frappe.set_value("Employee", employee, "custom_operations_role_allocation", custom_operations_role_allocation)
+    frappe.set_value("Employee", employee, "custom_is_reliever", custom_is_reliever)
 
 @frappe.whitelist(allow_guest=True)
 def search_staff(key, search_term):
@@ -1283,3 +1359,158 @@ def get_employee_detail(employee_pk):
     if employee_pk:
         pk, employee_id, employee_name, enrolled, cell_number = frappe.db.get_value("Employee", employee_pk, ["name", "employee_id", "employee_name", "enrolled", "cell_number"])
         return {'pk':pk, 'employee_id': employee_id, 'employee_name': employee_name, 'enrolled': enrolled, "cell_number": cell_number}
+    
+
+def create_employee_schedule():
+    """
+    Generate employee schedules for the month after the next.
+    """
+    # Determine the target month (month after next)
+    today = frappe.utils.nowdate()
+    target_month_start = get_first_day(add_months(today, 1))
+    target_month_end = get_last_day(add_months(today, 1))
+
+    shifts_with_auto_roster = frappe.get_all(
+    "Operations Shift",
+    filters={"automate_roster": 1},
+    fields=["name"]
+    )
+
+    shift_names = [shift["name"] for shift in shifts_with_auto_roster]
+
+    if shift_names:
+        # Get all employees with automate roster enabled
+        employees = frappe.get_all(
+        "Employee",
+        filters={"shift": ["in", shift_names]},
+        fields=["name", "employee_name", "department", "day_off_category", "number_of_days_off", "custom_operations_role_allocation", "shift"]
+        )
+
+        # Process each employee
+        for employee in employees:
+            start_date = getdate(target_month_start)
+            end_date = getdate(target_month_end)
+            total_days = date_diff(end_date, start_date) + 1
+
+            if not employee.shift or not employee.custom_operations_role_allocation:
+                frappe.log_error(
+                    f"Missing shift or operations role for employee {employee.name}", 
+                    "Employee Schedule Creation Error"
+                )
+                continue
+
+            operations_shift = frappe.get_doc("Operations Shift", employee.shift, ignore_permissions=True)
+            operations_role = frappe.get_doc("Operations Role", employee.custom_operations_role_allocation, ignore_permissions=True)
+
+            if not operations_shift or not operations_role:
+                frappe.log_error(
+                    f"Invalid shift or operations role for employee {employee.name}", 
+                    "Employee Schedule Creation Error"
+                )
+                continue
+
+            for day in range(total_days):
+                current_date = add_days(start_date, day)
+                availability = determine_availability(
+                    current_date,
+                    start_date,
+                    total_days,
+                    employee.day_off_category,
+                    employee.number_of_days_off
+                )
+                create_or_update_schedule_for_employee(employee, current_date, availability, operations_shift, operations_role)
+
+
+def create_or_update_schedule_for_employee(employee, date, availability, operations_shift, operations_role):
+    """
+    Create or update an Employee Schedule record for the given employee and date.
+    """
+    try:
+        name = f"{date}_{employee.name}_Basic"
+        # Check if an Employee Schedule record already exists
+        existing_schedule = frappe.get_value(
+            "Employee Schedule",
+            {"employee": employee.name, "date": date},
+            "name"
+        )
+
+        creation = now()
+        owner = frappe.session.user
+        start_datetime = datetime.strptime(f"{date} {operations_shift.start_time}", '%Y-%m-%d %H:%M:%S')
+        end_datetime = datetime.strptime(f"{date} {operations_shift.end_time}", '%Y-%m-%d %H:%M:%S')
+        day_off_ot = 1 if availability == "Day Off OT" else 0
+
+        if existing_schedule:
+            # Update the existing record
+            schedule_doc = frappe.get_doc("Employee Schedule", existing_schedule)
+            schedule_doc.employee_availability = "Working"
+            schedule_doc.date = date
+            schedule_doc.shift = operations_shift.name
+            schedule_doc.site = operations_shift.site
+            schedule_doc.project = operations_shift.project
+            schedule_doc.shift_type = operations_shift.shift_type
+            schedule_doc.operations_role = operations_role.name
+            schedule_doc.post_abbrv = operations_role.post_abbrv
+            schedule_doc.roster_type = "Basic"
+            schedule_doc.day_off_ot = day_off_ot
+            schedule_doc.start_datetime = start_datetime
+            schedule_doc.end_datetime = end_datetime
+            schedule_doc.save(ignore_permissions=True)
+        else:
+            # Create a new record
+            frappe.get_doc({
+                "doctype": "Employee Schedule",
+                "name": name,
+                "employee": employee.name,
+                "employee_name": employee.employee_name,
+                "department": employee.department,
+                "date": date,
+                "shift": operations_shift.name,
+                "site": operations_shift.site,
+                "project": operations_shift.project,
+                "shift_type": operations_shift.shift_type,
+                "employee_availability": "Working",
+                "operations_role": operations_role.name,
+                "post_abbrv": operations_role.post_abbrv,
+                "roster_type": "Basic",
+                "day_off_ot": day_off_ot,
+                "start_datetime": start_datetime,
+                "end_datetime": end_datetime,
+                "owner": owner,
+                "modified_by": owner,
+                "creation": creation,
+                "modified": creation
+            }).insert(ignore_permissions=True)
+            frappe.db.commit()
+    except Exception as e:
+        frappe.log_error(f"Error for employee {employee.name} on {date}: {str(e)}", "Employee Schedule Error")
+
+
+def determine_availability(current_date, start_date, total_days, day_off_category, num_days_off):
+    """
+    Determine the availability of an employee based on day-off category and number of days off.
+    """
+    if day_off_category == "Weekly":
+        # Weekly schedule logic
+        day_of_week = current_date.weekday()
+        week_day_index = (day_of_week + 1) % 7  # Sunday = 0
+        return "Working" if week_day_index < (7 - num_days_off) else "Day Off OT"
+
+    elif day_off_category == "Monthly":
+        # Monthly schedule logic
+        day_index = date_diff(current_date, start_date)
+        return "Working" if day_index < total_days - num_days_off else "Day Off OT"
+
+    return "Working"  # Default to working if no category matches
+
+
+@frappe.whitelist()
+def get_employee_details(employee_id):
+    employee = frappe.get_doc("Employee", employee_id)
+    return {
+        "project": employee.project,
+        "site": employee.site,
+        "shift": employee.shift,
+        "custom_is_reliever": employee.custom_is_reliever,
+        "custom_operations_role_allocation": employee.custom_operations_role_allocation
+    }

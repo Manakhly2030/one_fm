@@ -1,0 +1,177 @@
+{
+    "charts": [],
+    "content": "[{\"id\":\"eiZ3WreL_t\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Operations</span>\",\"col\":12}},{\"id\":\"G1d7bwmesC\",\"type\":\"card\",\"data\":{\"card_name\":\"Quick Access\",\"col\":4}},{\"id\":\"eICpKbhunG\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\"></span><span class=\\\"h4\\\">Reports and Masters</span>\",\"col\":12}},{\"id\":\"5RYNPQ3kuQ\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"lcuCzanwFz\",\"type\":\"card\",\"data\":{\"card_name\":\"Checkers\",\"col\":4}}]",
+    "creation": "2024-12-15 10:54:34.025347",
+    "custom_blocks": [],
+    "docstatus": 0,
+    "doctype": "Workspace",
+    "for_user": "",
+    "hide_custom": 1,
+    "icon": "quantity-1",
+    "idx": 0,
+    "indicator_color": "green",
+    "is_hidden": 0,
+    "label": "Operations",
+    "links": [
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Masters",
+      "link_count": 6,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Contracts",
+      "link_count": 0,
+      "link_to": "Contracts",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Project",
+      "link_count": 0,
+      "link_to": "Project",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Operations Site",
+      "link_count": 0,
+      "link_to": "Operations Site",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Operations Shift",
+      "link_count": 0,
+      "link_to": "Operations Shift",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Operations Post",
+      "link_count": 0,
+      "link_to": "Operations Post",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Operations Role",
+      "link_count": 0,
+      "link_to": "Operations Role",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Quick Access",
+      "link_count": 1,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Roster",
+      "link_count": 0,
+      "link_to": "roster",
+      "link_type": "Page",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Checkers",
+      "link_count": 4,
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Card Break"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Day Off Checker",
+      "link_count": 0,
+      "link_to": "Roster Day Off Checker",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Roster Post Action",
+      "link_count": 0,
+      "link_to": "Roster Post Actions",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Roster Employee Action",
+      "link_count": 0,
+      "link_to": "Roster Employee Actions",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Post Schedule Checker",
+      "link_count": 0,
+      "link_to": "Post Scheduler Checker",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+     },
+     {
+        "hidden": 0,
+        "is_query_report": 0,
+        "label": "Default Shift Checker",
+        "link_count": 0,
+        "link_to": "Default Shift Checker",
+        "link_type": "DocType",
+        "onboard": 0,
+        "type": "Link"
+       }
+    ],
+    "modified": "2024-12-17 16:03:19.484670",
+    "modified_by": "Administrator",
+    "module": "Operations",
+    "name": "Operations",
+    "number_cards": [],
+    "owner": "Administrator",
+    "parent_page": "",
+    "public": 1,
+    "quick_lists": [],
+    "roles": [],
+    "sequence_id": 24.0,
+    "shortcuts": [],
+    "title": "Operations"
+   }

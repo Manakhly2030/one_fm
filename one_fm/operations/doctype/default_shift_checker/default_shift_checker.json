@@ -1,0 +1,177 @@
+{
+ "actions": [],
+ "autoname": "format: {start_date} | {end_date} | Check Default Shift | {operations_shift}",
+ "creation": "2024-12-20 10:44:56.021618",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "start_date",
+  "operations_shift",
+  "column_break_fxzs",
+  "end_date",
+  "actions_section",
+  "status",
+  "shift_supervisor",
+  "shift_supervisor_name",
+  "column_break_mejq",
+  "action_type",
+  "site_supervisor",
+  "site_supervisor_name",
+  "site_supervisor_user",
+  "section_break_yzvl",
+  "employees_assigned_outside_default_shift"
+ ],
+ "fields": [
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_fxzs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actions_section",
+   "fieldtype": "Section Break",
+   "label": "Actions"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Pending\nCompleted\nOverdue\nCancelled"
+  },
+  {
+   "fieldname": "shift_supervisor",
+   "fieldtype": "Link",
+   "label": "Shift Supervisor",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "shift_supervisor.employee_name",
+   "fieldname": "shift_supervisor_name",
+   "fieldtype": "Data",
+   "label": "Shift Supervisor Name"
+  },
+  {
+   "fieldname": "column_break_mejq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "No Changes Made",
+   "fieldname": "action_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Action Type",
+   "options": "No Changes Made\nShift Allocation Update\nMarked Employees as Relievers\nMixed Actions"
+  },
+  {
+   "fieldname": "site_supervisor",
+   "fieldtype": "Link",
+   "label": "Site Supervisor",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "site_supervisor.employee_name",
+   "fetch_if_empty": 1,
+   "fieldname": "site_supervisor_name",
+   "fieldtype": "Data",
+   "label": "Site Supervisor Name"
+  },
+  {
+   "fieldname": "section_break_yzvl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "employees_assigned_outside_default_shift",
+   "fieldtype": "Table",
+   "label": "Employees Assigned Outside Default Shift",
+   "options": "Default Shift Checker Employee"
+  },
+  {
+   "fieldname": "operations_shift",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Operations Shift",
+   "options": "Operations Shift"
+  },
+  {
+   "fetch_from": "site_supervisor.user_id",
+   "fetch_if_empty": 1,
+   "fieldname": "site_supervisor_user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Site Supervisor User",
+   "options": "User"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-24 09:49:23.206286",
+ "modified_by": "Administrator",
+ "module": "Operations",
+ "name": "Default Shift Checker",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Site Supervisor",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Shift Supervisor",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Orange",
+   "title": "Pending"
+  },
+  {
+   "color": "Pink",
+   "title": "Overdue"
+  },
+  {
+   "color": "Green",
+   "title": "Completed"
+  },
+  {
+   "color": "Red",
+   "title": "Cancelled"
+  }
+ ]
+}
