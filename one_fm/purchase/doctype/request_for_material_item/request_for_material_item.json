@@ -21,6 +21,7 @@
   "to_date",
   "section_break_4",
   "requested_description",
+  "col_break3",
   "attach_photo",
   "item_url",
   "description",
@@ -445,11 +446,15 @@
    "fieldtype": "Data",
    "label": "Item URL",
    "options": "URL"
+  },
+  {
+   "fieldname": "col_break3",
+   "fieldtype": "Column Break"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2025-01-19 09:02:15.045387",
+ "modified": "2025-01-20 19:08:03.446172",
  "modified_by": "Administrator",
  "module": "Purchase",
  "name": "Request for Material Item",
