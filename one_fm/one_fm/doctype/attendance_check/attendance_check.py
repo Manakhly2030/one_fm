@@ -207,7 +207,7 @@ class AttendanceCheck(Document):
                         att.shift_assignment = self.shift_assignment
                     else:
                         shift_assignment = frappe.db.exists("Shift Assignment", {
-                                'employee':self.employee, 'start_date':self.date, 'roster_type':self.roster_type
+                                'docstatus': 1, 'employee':self.employee, 'start_date':self.date, 'roster_type':self.roster_type
                             })
                         if shift_assignment:
                             att.shift_assignment = shift_assignment
