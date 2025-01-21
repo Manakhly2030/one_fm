@@ -96,6 +96,7 @@ frappe.ui.form.on('Request for Material', {
 		}
 		set_filters(frm);
 		set_warehouse_filters(frm);
+		toggle_child_table_fields(frm);
 
 	},
 	items_on_form_rendered: (frm) => {
@@ -325,6 +326,7 @@ frappe.ui.form.on('Request for Material', {
 		set_item_field_property(frm);
 		set_warehouse_filters(frm);
 		set_filters(frm);
+		toggle_child_table_fields(frm);
 	},
 	project: function(frm) {
 		set_t_warehouse_hidden(frm);
@@ -858,4 +860,13 @@ function set_t_warehouse(frm){
 };
 
 
+function toggle_child_table_fields(frm) {
+	
+    if (frm.doc.type === "Stock") {
+		
+        frm.fields_dict['items'].grid.toggle_display('is_service_request', false);
+		frm.fields_dict['items'].grid.toggle_display('attach_photo', false);
+		frm.fields_dict['items'].grid.toggle_display('item_url', false);
+	}
+}
 

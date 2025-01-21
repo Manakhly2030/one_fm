@@ -113,12 +113,11 @@ class RequestforMaterial(BuyingController):
 					item.requested_description = item.description
 
 	def validate_item_photo_or_url(self):
-		if self.items:
+		if self.type != "Stock" and self.items:
+			
 			for item in self.items:
-				if not item.is_service_request:
-
-					if not item.attach_photo and not item.item_url:
-						frappe.throw(_("Please provide either an item photo or a URL"))
+				if not item.is_service_request and not (item.attach_photo or item.item_url):
+					frappe.throw(_("Please provide either an item photo or a URL"))
 				
 
 	def set_request_for_material_accepter_and_approver(self):
