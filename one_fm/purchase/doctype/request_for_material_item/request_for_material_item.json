@@ -9,6 +9,7 @@
   "item_code",
   "show_stock_level",
   "requested_item_name",
+  "is_service_request",
   "item_name",
   "item_group",
   "brand",
@@ -22,6 +23,8 @@
   "requested_description",
   "description",
   "column_break_12",
+  "attach_photo",
+  "item_url",
   "quantity_and_warehouse",
   "warehouse",
   "qty",
@@ -421,11 +424,32 @@
    "fieldname": "show_stock_level",
    "fieldtype": "Button",
    "label": "Show Stock Level"
+  },
+  {
+   "default": "0",
+   "description": "If checked, this item line is for a service request.",
+   "fieldname": "is_service_request",
+   "fieldtype": "Check",
+   "label": "Is Service Request"
+  },
+  {
+   "depends_on": "eval:!doc.is_service_request",
+   "fieldname": "attach_photo",
+   "fieldtype": "Attach Image",
+   "label": "Attach Photo"
+  },
+  {
+   "depends_on": "eval:!doc.is_service_request",
+   "description": "Provide URL for the Item Details",
+   "fieldname": "item_url",
+   "fieldtype": "Data",
+   "label": "Item URL",
+   "options": "URL"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2023-08-20 18:28:26.601642",
+ "modified": "2025-01-20 21:03:47.441756",
  "modified_by": "Administrator",
  "module": "Purchase",
  "name": "Request for Material Item",
