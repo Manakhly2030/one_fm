@@ -8,7 +8,7 @@ from frappe.utils import nowdate, add_to_date, cstr, cint, getdate, get_link_to_
 from one_fm.processor import sendemail
 from frappe.permissions import get_doctype_roles
 import datetime
-from datetime import timedelta
+from datetime import timedelta, datetime
 from collections import OrderedDict
 
 class RosterEmployeeActions(Document):
@@ -93,9 +93,12 @@ def create_roster_employee_actions():
 			roster_employee_actions.supervisor = supervisor.shift_supervisor
 			roster_employee_actions.site_supervisor = site_supervisor
 			for employee in employees:
+				sorted_dates = sorted(
+                [datetime.strptime(date.strip(), "%Y-%m-%d") for date in employees_not_rostered.get(employee, [])]
+            )
 				roster_employee_actions.append('employees_not_rostered', {
 					'employee': employee,
-					"missing_dates": ", ".join(employees_not_rostered.get(employee))
+					"missing_dates": ", ".join([date.strftime("%Y-%m-%d") for date in sorted_dates])
 				})
 			roster_employee_actions.save()
 		except Exception as e:
