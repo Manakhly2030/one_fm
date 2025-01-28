@@ -34,6 +34,7 @@ frappe.ui.form.on('Accommodation Checkin Checkout', {
 		set_required(frm);
 	},
 	tenant_category: function(frm) {
+		clear_tenant_details(frm);
 		set_field_properties(frm);
 	}
 });
@@ -174,6 +175,22 @@ var set_checkin_details = function(frm) {
 			frm.refresh_fields();
 		}
 	});
+};
+
+var clear_tenant_details = function(frm) {
+	frm.set_value({
+		employee: "",
+		full_name: "",
+		employee_id: "",
+		passport_number: "",
+		civil_id: "",
+		designation: "",
+		employment_type: "",
+		project: "",
+		employee_status: "",
+		nationality: ""
+	});
+	frm.refresh_fields();
 };
 
 var set_filters = function(frm) {
