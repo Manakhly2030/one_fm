@@ -53,8 +53,7 @@ def export_data(
 		filters=filters,
 		method=parent_doctype,
 	)
-	
-	print(select_columns, 3444444444444444444)
+
 
 	exporter = DataExporter(
 		doctype=doctype,
@@ -170,12 +169,6 @@ class DataExporter:
 
 		self.column = self.labelrow
 		values = self.add_data()
-
-		with open("yaga_output.csv", mode="w", newline="") as file:
-			writer = csv.writer(file)
-			
-			# Writing each array (row) into the file
-			writer.writerows(values)
 
 		if self.with_data and not values:
 			frappe.msgprint(
