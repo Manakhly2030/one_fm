@@ -53,6 +53,8 @@ def export_data(
 		filters=filters,
 		method=parent_doctype,
 	)
+
+
 	exporter = DataExporter(
 		doctype=doctype,
 		parent_doctype=parent_doctype,
@@ -285,6 +287,7 @@ class DataExporter:
 		self.data = frappe.get_list(
 			self.doctype, fields=["*"], filters=self.filters, limit_page_length=None, order_by=order_by
 		)
+
 		cell_colour = []
 		row_index = 0
 		for doc in self.data:
@@ -295,19 +298,20 @@ class DataExporter:
 			if self.all_doctypes:
 				# add child tables
 				for c in self.child_doctypes:
-					child_doctype_table = DocType(c["doctype"])
-					data_row = (
-						frappe.qb.from_(child_doctype_table)
-						.select("*")
-						.where(child_doctype_table.parent == doc.name)
-						.where(child_doctype_table.parentfield == c["parentfield"])
-						.where(child_doctype_table.parenttype == self.doctype)
-						.orderby(child_doctype_table.idx)
-					)
-					for ci, child in enumerate(data_row.run(as_dict=True)):
-						if ci > 0:
-							self.add_data_row(rows, self.doctype, None, doc, ci, cell_colour, row_index)
-						self.add_data_row(rows, c["doctype"], c["parentfield"], child, ci, cell_colour, row_index)
+					if self.select_columns.get(c.get("doctype")):
+						child_doctype_table = DocType(c["doctype"])
+						data_row = (
+							frappe.qb.from_(child_doctype_table)
+							.select("*")
+							.where(child_doctype_table.parent == doc.name)
+							.where(child_doctype_table.parentfield == c["parentfield"])
+							.where(child_doctype_table.parenttype == self.doctype)
+							.orderby(child_doctype_table.idx)
+						)
+						for ci, child in enumerate(data_row.run(as_dict=True)):
+							if ci > 0:
+								self.add_data_row(rows, self.doctype, None, doc, ci, cell_colour, row_index)
+							self.add_data_row(rows, c["doctype"], c["parentfield"], child, ci, cell_colour, row_index)
 
 			for row in rows:
 				data.append(row)
